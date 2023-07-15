@@ -38,15 +38,16 @@ if [[ $SERYI == "y" || $SERYI == "Y" || $SERYI == "yes" || $SERYI == "Yes" || $S
 then
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" HOSTNAME
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
+	sudo sed -i 's|*/15 * * * * root /usr/local/bin/ddns_update.sh||g' /etc/ufw/sysctl.conf
 	sudo rm -f /usr/local/bin/ddns_update.sh
 	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
 	sudo sed -i "2c HOSTNAME=${HOSTNAME} # С NO-IP или KeenDNS ip локального пк" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
-	*/15 * * * * /usr/local/bin/ddns_update.sh
+	sudo sed -i "23с */15 * * * * root /usr/local/bin/ddns_update.sh" /etc/crontab
 	echo "Скрипт ddns_update.sh в /usr/local/bin"
-	echo "Скрипт ddns_update.sh добавлен в cron каждые 15минут"
+	echo "Скрипт ddns_update.sh добавлен в /etc/crontab каждые 15 минут"
 else
     read -p "Пишите IP Статику от провайдера(пример 176.213.115.169):" HOSTNAME
 	:
