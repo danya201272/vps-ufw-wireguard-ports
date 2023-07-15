@@ -43,7 +43,7 @@ then
 	sudo chmod +x ddns_update.sh
 	sudo sed -i "2c HOSTNAME=${HOSTNAME} # С NO-IP или KeenDNS ip локального пк" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
-	mv -f ddns_update.sh /usr/local/bin
+	sudo mv -f ddns_update.sh /usr/local/bin
 	*/15 * * * * /usr/local/bin/ddns_update.sh
 	echo "Скрипт ddns_update.sh в /usr/local/bin"
 	echo "Скрипт ddns_update.sh добавлен в cron каждые 15минут"
