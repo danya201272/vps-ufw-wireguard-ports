@@ -38,14 +38,14 @@ if [[ $SERYI == "y" || $SERYI == "Y" || $SERYI == "yes" || $SERYI == "Yes" || $S
 then
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" HOSTNAME
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
-	sudo sed -i 's|*/15 * * * * root /usr/local/bin/ddns_update.sh||g' /etc/ufw/sysctl.conf
+	sudo sed -i '/ddns_update.sh/d' /etc/crontab # Удаляет строку если нашла ddns_update.sh
 	sudo rm -f /usr/local/bin/ddns_update.sh
 	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
 	sudo sed -i "2c HOSTNAME=${HOSTNAME} # С NO-IP или KeenDNS ip локального пк" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
-	sudo sed -i "23с */15 * * * * root /usr/local/bin/ddns_update.sh" /etc/crontab
+	sudo sed -i "19i */15 * * * * root /usr/local/bin/ddns_update.sh" /etc/crontab
 	echo "Скрипт ddns_update.sh в /usr/local/bin"
 	echo "Скрипт ddns_update.sh добавлен в /etc/crontab каждые 15 минут"
 else
@@ -126,6 +126,6 @@ sudo sed -i "9i -A POSTROUTING -o ${WAN} -j MASQUERADE" /etc/ufw/before.rules
 sudo sed -i '10i # dont delete the COMMIT line or these nat table rules wont' /etc/ufw/before.rules
 sudo sed -i '11i COMMIT' /etc/ufw/before.rules
 sudo sysctl -p
-
+sudo service cron reload
 
 sudo ufw disable && sudo ufw enable
