@@ -37,7 +37,7 @@ then
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" HOSTNAME
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
 	sudo rm -f ddns_update.sh
-	sudo curl -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
+	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
 	sudo sed -i "2c HOSTNAME=${HOSTNAME} # С NO-IP или KeenDNS ip локального пк" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
