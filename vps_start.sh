@@ -128,4 +128,6 @@ sudo sed -i '11i COMMIT' /etc/ufw/before.rules
 sudo sysctl -p
 sudo service cron reload
 
+
+sudo ufw reload
 sudo ufw disable && sudo ufw enable
