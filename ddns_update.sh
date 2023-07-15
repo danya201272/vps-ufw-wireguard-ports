@@ -1,6 +1,6 @@
 #!/bin/bash
-HOSTNAME=$HOSTNAME # С NO-IP или KeenDNS ip локального пк
-WIREGUARD_PORT=1 # WIREGUARD Порт
+HOSTNAME=vvvs.keenetick.pro # С NO-IP или KeenDNS ip локального пк
+WIREGUARD_PORT=50820 # WIREGUARD Порт
 SSH_PORT=22 #  SSH Port
 
 

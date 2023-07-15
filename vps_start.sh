@@ -82,7 +82,8 @@ sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip ope
 sudo ufw limit $GAME_TCP/tcp comment "GAME TCP Limit"
 sudo ufw limit $GAME_UDP/udp comment "GAME UDP Limit"
 
-#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_TCP -j DNAT --to-destination $ip_vpn_client 
+#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_TCP -j DNAT --to-destination $ip_vpn_client
+#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
 
 read -p "Нужна ли Блокировка ICMP(Y/N):" ICMPSSSS
 if [[ $ICMPSSSS == "y" || $ICMPSSSS == "Y" || $ICMPSSSS == "yes" || $ICMPSSSS == "Yes" || $ICMPSSSS == "Д" || $ICMPSSSS == "Да" || $ICMPSSSS == "д" || $ICMPSSSS == "да" ]]
