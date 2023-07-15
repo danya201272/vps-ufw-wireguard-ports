@@ -6,7 +6,7 @@ SSH_PORT=22 #  SSH Port
 
 #IF IT DOES NOT WORK, AT LEAST ON UBUNTU INSTALL, bind-utils to get the host command
 
-#Create a cron */15 * * * * /usr/local/bin/ddns_update.sh
+#Create a cron */15 * * * * /usr/local/bin/ddns_update.sh > /dev/null
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root"
