@@ -10,7 +10,7 @@ sudo systemctl enable cron
 echo "Порт для SSH: ${SSH_PORT}" 
 
 sudo ip -br a
-read -p "Напиши название интерфейса VPS с доступом в интернет (пример eth0,enp24s0):" WAN
+read -p "Напиши название интерфейса VPS с доступом в интернет(выше ваши интерфейсы)(пример eth0,enp24s0):" WAN
 
 read -p "Порт Игры с локалки по TCP Можно писать так (8080:8090) или только так (80):" GAME_TCP
 
@@ -86,7 +86,7 @@ sudo ufw limit $GAME_UDP/udp comment "GAME UDP Limit"
 #sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_TCP -j DNAT --to-destination $ip_vpn_client
 #sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
 
-read -p "Нужна ли Блокировка ICMP(Y/N):" ICMPSSSS
+read -p "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N):" ICMPSSSS
 if [[ $ICMPSSSS == "y" || $ICMPSSSS == "Y" || $ICMPSSSS == "yes" || $ICMPSSSS == "Yes" || $ICMPSSSS == "Д" || $ICMPSSSS == "Да" || $ICMPSSSS == "д" || $ICMPSSSS == "да" ]]
 then
 	sudo sysctl -w net.ipv4.icmp_echo_ignore_all=1 # Блокировка ICMP
