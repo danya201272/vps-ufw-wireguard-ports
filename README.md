@@ -9,7 +9,7 @@ This script create a wireguard vpn connection with local server and vps server. 
 SSH порт 22 всегда.
 Wireguard порт указанный при настройке.
 Также установлены ufw limit на порт ssh и порты игрового сервера.
-Подключение к SSH и Wireguard будет доступно только через IP вашего сервера дома(для других порты кроме игровых будут закрыты)
+Подключение к SSH и Wireguard будет доступно только через IP вашего сервера дома или за туннелем wg0(для других порты, кроме игровых будут закрыты).
 ## Requirements
 - Ubuntu >= 18.04
 ## Usage
