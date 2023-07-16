@@ -1,10 +1,15 @@
 #!/bin/bash
 VPNS=wg0 # Название интерфейса Wireguard
+sudo apt-get update && sudo apt-get full-upgrade -y
 sudo apt update && sudo apt full-upgrade -y
 sudo apt-get -y install openssh-server
 sudo apt-get -y install curl
 sudo apt-get -y install bind9-utils
 sudo apt-get -y install cron
+sudo apt install openssh-server -y
+sudo apt install curl -y
+sudo apt install bind9-utils -y
+sudo apt install cron -y
 sudo systemctl enable cron
 sudo systemctl enable sshd
 
@@ -76,6 +81,7 @@ else
 fi
 
 sudo apt-get install ufw -y
+sudo apt install ufw -y
 sudo ufw reset
 sudo ufw disable
 sudo ufw default deny incoming
@@ -127,6 +133,7 @@ read -p "Нужен ли fail2ban на SSH?(Y/N):" FAIL2TOBANSSS
 if [[ $FAIL2TOBANSSS == "y" || $FAIL2TOBANSSS == "Y" || $FAIL2TOBANSSS == "yes" || $FAIL2TOBANSSS == "Yes" || $FAIL2TOBANSSS == "Д" || $FAIL2TOBANSSS == "Да" || $FAIL2TOBANSSS == "д" || $FAIL2TOBANSSS == "да" ]]
 then
 	sudo apt-get install fail2ban -y
+	sudo apt install fail2ban -y
 	systemctl start fail2ban
 	systemctl enable fail2ban
 	sudo cp /etc/fail2ban/jail.{conf,local}
