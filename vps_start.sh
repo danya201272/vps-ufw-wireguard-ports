@@ -1,6 +1,6 @@
 #!/bin/bash
 VPNS=wg0 # Название интерфейса Wireguard
-sudo apt-get update && sudo apt-get upgrade -y
+sudo apt update && sudo apt full-upgrade -y
 sudo apt-get -y install openssh-server
 sudo apt-get -y install curl
 sudo apt-get -y install bind9-utils
@@ -177,7 +177,7 @@ echo "Порт Игровой TCP:${GAME_TCP}"
 echo "Порт Игровой UDP:${GAME_UDP}"
 echo "IP адрес клиента Wireguard:${ip_vpn_client}"
 echo "Ваш IP публичный адрес (сервера дома):${HOSTNAMESSSS}"
-echo "Имя нового пользователя:${snames}"
+echo "Имя нового пользователя SSH:${snames}"
 
 read -p "Перезагрузить VPS?(Y/N)" VPSRESTARTSSS
 if [[ $VPSRESTARTSSS == "y" || $VPSRESTARTSSS == "Y" || $VPSRESTARTSSS == "yes" || $VPSRESTARTSSS == "Yes" || $VPSRESTARTSSS == "Д" || $VPSRESTARTSSS == "Да" || $VPSRESTARTSSS == "д" || $VPSRESTARTSSS == "да" ]]
