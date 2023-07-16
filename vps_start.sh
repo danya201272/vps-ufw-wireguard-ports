@@ -77,7 +77,6 @@ then
 	echo "Скрипт ddns_update.sh добавлен в /etc/crontab каждые 15 минут"
 else
     read -p "Пишите IP Статику от провайдера(пример 176.213.115.169):" HOSTNAMESSSS
-	:
 fi
 
 sudo apt-get install ufw -y
@@ -99,8 +98,6 @@ then
 	sudo sed -i 's|IPV6=no|IPV6=yes|g' /etc/default/ufw # IPV6
 	sudo sed -i 's|#IPV6=no|IPV6=yes|g' /etc/default/ufw  # IPV6
 	sudo sysctl -p
-else
-	:
 fi
 
 sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp
@@ -126,7 +123,6 @@ then
 	sudo sysctl -p
 else
 	sudo sysctl -w net.ipv4.icmp_echo_ignore_all=0 # Разблокировка ICMP
-	:
 fi
 
 read -p "Нужен ли fail2ban на SSH?(Y/N):" FAIL2TOBANSSS
@@ -146,8 +142,6 @@ then
 	sudo sed -i "s|port    = ssh|port    = ssh,sshd,${SSH_PORT}|g" /etc/fail2ban/jail.local
 	sudo sed -i "s|port     = ssh|port     = ssh,sshd,${SSH_PORT}|g" /etc/fail2ban/jail.local
 	sudo systemctl restart fail2ban
-else
-	:
 fi
 
 
