@@ -16,7 +16,7 @@ sudo systemctl enable sshd
 
 read -p "Введите порт для SSH(22):" SSH_PORT
 
-read -p "Нужно ли отключение root и добавление нового пользователя для SSH(Y/N):" ROOOTS
+read -p "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N):" ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
 then
 	read -p "Введите имя нового пользователя(bino):" snames
@@ -29,9 +29,7 @@ then
 	sudo service ssh restart
 	echo "Успешно"
 else
-	sudo sed -i '/PermitRootLogin/d' /etc/ssh/sshd_config
 	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
-	sudo sed -i "18i PermitRootLogin no" /etc/ssh/sshd_config
 	sudo service ssh restart
 fi
 
