@@ -6,7 +6,6 @@ This script create a wireguard vpn connection with local server and vps server. 
 Делает ipv4 и ipv6 NAT,Route и Port Forwading через ufw, и ставит fail2ban для SSH.
 А также выключает ICMP пакеты.
 Доступ к vps через ssh и wireguard будут иметь только ip указанный вами (ip статический или с ddns).
-SSH порт 22 всегда.
 Wireguard порт указанный при настройке.
 Также установлены ufw limit на порт ssh и порты игрового сервера.
 Подключение к SSH и Wireguard будет доступно только через IP вашего сервера дома или за туннелем wg0(для других порты, кроме игровых будут закрыты).
