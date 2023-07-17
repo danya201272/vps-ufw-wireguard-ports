@@ -38,9 +38,9 @@ fi
 sudo ip -br a
 read -p "Напиши название интерфейса VPS с доступом в интернет(выше ваши интерфейсы)(пример eth0,enp24s0):" WAN
 
-read -p "Порт Игры с локалки по TCP Можно писать так (8080:8090) или только так (80):" GAME_TCP
+read -p "Порт Игры с локалки по TCP Можно писать так (12,22) или (1501:2000) или (1000,1001,1501:2000):" GAME_TCP
 
-read -p "Порт Игры с локалки по UDP Можно писать так (8080:8090) или только так (443):" GAME_UDP
+read -p "Порт Игры с локалки по UDP Можно писать так (12,22) или (1501:2000) или (1000,1001,1501:2000):" GAME_UDP
 
 
 sudo iptables -P INPUT ACCEPT
@@ -108,21 +108,18 @@ sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip ope
 sudo ufw limit $GAME_TCP/tcp comment "GAME TCP Limit"
 sudo ufw limit $GAME_UDP/udp comment "GAME UDP Limit"
 
-#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_TCP -j DNAT --to-destination $ip_vpn_client
-#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp --dport $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
+#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_TCP -j DNAT --to-destination $ip_vpn_client
+#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
 
 read -p "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N):" ICMPSSSS
 if [[ $ICMPSSSS == "y" || $ICMPSSSS == "Y" || $ICMPSSSS == "yes" || $ICMPSSSS == "Yes" || $ICMPSSSS == "Д" || $ICMPSSSS == "Да" || $ICMPSSSS == "д" || $ICMPSSSS == "да" ]]
 then
 	sudo sysctl -w net.ipv4.icmp_echo_ignore_all=1 # Блокировка ICMP
-	sudo sed -i 's/-A ufw-before-input -p icmp --icmp-type destination-unreachable -j ACCEPT/-A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP/g' /etc/ufw/before.rules # ICMP DROP
-	sudo sed -i 's/-A ufw-before-input -p icmp --icmp-type time-exceeded -j ACCEPT/-A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP/g' /etc/ufw/before.rules # ICMP DROP
-	sudo sed -i 's/-A ufw-before-input -p icmp --icmp-type parameter-problem -j ACCEPT/-A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP/g' /etc/ufw/before.rules # ICMP DROP
-	sudo sed -i 's/-A ufw-before-input -p icmp --icmp-type echo-request -j ACCEPT/-A ufw-before-input -p icmp --icmp-type echo-request -j DROP/g' /etc/ufw/before.rules # ICMP DROP
-	sudo sed -i 's/-A ufw-before-input -p icmp --icmp-type source-quench -j ACCEPT/-A ufw-before-input -p icmp --icmp-type source-quench -j DROP/g' /etc/ufw/before.rules # ICMP DROP
+	sudo sed -i '/ufw-before-input.*icmp/s/ACCEPT/DROP/g' /etc/ufw/before.rules
 	sudo sysctl -p
 else
 	sudo sysctl -w net.ipv4.icmp_echo_ignore_all=0 # Разблокировка ICMP
+	sudo sed -i '/ufw-before-input.*icmp/s/DROP/ACCEPT/g' /etc/ufw/before.rules
 fi
 
 read -p "Нужен ли fail2ban на SSH?(Y/N):" FAIL2TOBANSSS
@@ -159,8 +156,8 @@ sudo sed -i '2i *nat' /etc/ufw/before.rules
 sudo sed -i '3i :PREROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '4i :POSTROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '5i # Port Forwardings' /etc/ufw/before.rules
-sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp --dport ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules # "" для работы подстановки переменных 
-sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp --dport ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
+sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules # "" для работы подстановки переменных 
+sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
 sudo sed -i "8i # Forward traffic through ${WAN} - Change to match you out-interface" /etc/ufw/before.rules
 sudo sed -i "9i -A POSTROUTING -o ${WAN} -j MASQUERADE" /etc/ufw/before.rules
 sudo sed -i '10i # dont delete the COMMIT line or these nat table rules wont' /etc/ufw/before.rules
@@ -168,6 +165,42 @@ sudo sed -i '11i COMMIT' /etc/ufw/before.rules
 sudo sysctl -p
 sudo service cron reload
 
+read -p "Нужен ли AntiDDOS на TCP/UDP?(Y/N):" ANTIDDOSSSS
+if [[ $ANTIDDOSSSS == "y" || $ANTIDDOSSSS == "Y" || $ANTIDDOSSSS == "yes" || $ANTIDDOSSSS == "Yes" || $ANTIDDOSSSS == "Д" || $ANTIDDOSSSS == "Да" || $ANTIDDOSSSS == "д" || $ANTIDDOSSSS == "да" ]]
+then
+sudo sed -i '/*filter/ a \
+# **********************DDOS\
+:ufw-gameudp - [0:0]\
+:ufw-gametcp - [0:0]\
+:ufw-gameudp-logdrop - [0:0]\
+:ufw-gametcp-logdrop - [0:0]\
+# **********************DDOS\ ' /etc/ufw/before.rules
+texts1="\"[UFW GAMEUDP DROP]"\"  
+texts2="\"[UFW GAMETCP DROP]"\"
+sudo sed -i "/# allow all on loopback/ a \
+# ANTIDDOS Rules **************\n\
+-A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT} -j ufw-gametcp\n\
+-A ufw-before-input -p tcp -m multiport --dports ${GAME_TCP} -j ufw-gametcp\n\
+-A ufw-before-input -p udp -m multiport --dports ${GAME_UDP} -j ufw-gameudp\n\
+# Limit connections per Class C\n\
+-A ufw-gametcp -p tcp --syn -m connlimit --connlimit-above 100 --connlimit-mask 24 -j ufw-gametcp-logdrop\n\
+# Limit connections per IP\n\
+-A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --set\n\
+-A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop\n\
+# Limit packets per IP\n\
+-A ufw-gametcp -m current --name pack_per_ip --set\n\
+-A ufw-gametcp -m current --name pack_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop\n\
+# Finally accept\n\
+-A ufw-gameudp -j ACCEPT\n\
+-A ufw-gametcp -j ACCEPT\n\
+# Log\n\
+-A ufw-gameudp-logdrop -m limit --limit 10/s --limit-burst 50 -j LOG --log-prefix ${texts1}\n\
+-A ufw-gametcp-logdrop -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix ${texts2}\n\
+-A ufw-gameudp-logdrop -j DROP\n\
+-A ufw-gametcp-logdrop -j DROP\n\
+# ANTIDDOS Rules ENDS**********\n\ " /etc/ufw/before.rules
+sudo sysctl -p
+fi
 
 sudo ufw reload
 sudo ufw disable && sudo ufw enable
@@ -188,5 +221,5 @@ then
 	sudo shutdown -r now
 	sudo systemctl reboot
 else
-	:
+	exit 0
 fi
