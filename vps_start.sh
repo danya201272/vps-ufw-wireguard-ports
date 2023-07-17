@@ -26,11 +26,9 @@ then
 	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
 	sudo sed -i "18i PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
-	sudo service ssh restart
 	echo "Успешно"
 else
 	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
-	sudo service ssh restart
 fi
 
 sudo ip -br a
@@ -222,6 +220,7 @@ then
 	sudo reboot -f
 	sudo shutdown -r now
 	sudo systemctl reboot
+	sudo service ssh restart
 else
 	exit 0
 fi
