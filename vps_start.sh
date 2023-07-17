@@ -26,13 +26,16 @@ then
 	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
 	sudo sed -i "18i PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
-	echo "Успешно"
+	echo "Лучше переподключитесь с именем $snames  "
 else
 	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
 fi
 
 sudo ip -br a
-read -p "Напиши название интерфейса VPS с доступом в интернет(выше ваши интерфейсы)(пример eth0,enp24s0):" WAN
+SERVER_NICCCCC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
+	until [[ ${WAN} =~ ^[a-zA-Z0-9_]+$ ]]; do
+		read -rp "Напиши название интерфейса VPS с доступом в интернет(пример eth0,enp24s0): " -e -i "${SERVER_NICCCCC}" WAN
+	done
 
 read -p "Порт Игры с локалки по TCP Можно писать так (12,22) или (1501:2000) или (1000,1001,1501:2000):" GAME_TCP
 
