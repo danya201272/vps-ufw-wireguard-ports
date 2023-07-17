@@ -90,7 +90,6 @@ then
 	sudo sed -i 's/#CacheFromLocalhost=no/CacheFromLocalhost=yes/g' /etc/systemd/resolved.conf
 	sudo sed -i 's/#DNS=/DNS=127.0.0.1/g' /etc/systemd/resolved.conf
 	HOSTNAMESSSS=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
-	echo "$HOSTNAMESSSS"
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
 else
