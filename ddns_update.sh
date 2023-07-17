@@ -7,7 +7,9 @@ sudo ufw allow 53/tcp comment "DDNS script"
 sudo ufw allow 53/udp comment "DDNS script"
 #IF IT DOES NOT WORK, AT LEAST ON UBUNTU INSTALL, bind-utils to get the host command
 #sudo crontab -e
-#Create a cron */15 * * * * root /usr/local/bin/ddns_update.sh > /dev/null
+#Create a cron */5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1
+
+#IN bash scrypt echo "*/5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1" | sudo tee -a /var/spool/cron/root
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root"
