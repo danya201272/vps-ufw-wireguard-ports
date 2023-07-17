@@ -28,28 +28,28 @@ sudo ./vps_start.sh
 :ufw-gametcp - [0:0]
 :ufw-gameudp-logdrop - [0:0]
 :ufw-gametcp-logdrop - [0:0]
-End required lines
-ANTIDDOS Rules **************
+#End required lines
+#ANTIDDOS Rules **************
 -A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT} -j ufw-gametcp
 -A ufw-before-input -p tcp -m multiport --dports ${GAME_TCP} -j ufw-gametcp
 -A ufw-before-input -p udp -m multiport --dports ${GAME_UDP} -j ufw-gameudp
-Limit connections per Class C
+#Limit connections per Class C
 -A ufw-gametcp -p tcp --syn -m connlimit --connlimit-above 100 --connlimit-mask 24 -j ufw-gametcp-logdrop
-Limit connections per IP
+#Limit connections per IP
 -A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --set
 -A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop
-Limit packets per IP
+#Limit packets per IP
 -A ufw-gametcp -m current --name pack_per_ip --set
 -A ufw-gametcp -m current --name pack_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop
-Finally accept
+#Finally accept
 -A ufw-gameudp -j ACCEPT
 -A ufw-gametcp -j ACCEPT
-Log
+#Log
 -A ufw-gameudp-logdrop -m limit --limit 10/s --limit-burst 50 -j LOG --log-prefix "[UFW GAMEUDP DROP]" # 50 Kbits/s
 -A ufw-gametcp-logdrop -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix "[UFW GAMETCP DROP]"
 -A ufw-gameudp-logdrop -j DROP
 -A ufw-gametcp-logdrop -j DROP
-ANTIDDOS Rules ENDS**********
+#ANTIDDOS Rules ENDS**********
 ```
 
 
