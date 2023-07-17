@@ -59,10 +59,22 @@ read -p "Выше в консоли ищите Client WireGuard IPv4:(приме
 
 read -p "Выше в консоли ищите Server WireGuard port [1-65535]:(пример 50821):" WIREGUARD_PORT
 
+sudo apt-get install ufw -y
+sudo apt install ufw -y
+sudo ufw reset
+sudo ufw disable
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw logging on
+sudo ufw logging low
+
 read -p "У вас серый ip с DDNS в локалке за туннелем(Y/N):" SERYI
 if [[ $SERYI == "y" || $SERYI == "Y" || $SERYI == "yes" || $SERYI == "Yes" || $SERYI == "Д" || $SERYI == "Да" || $SERYI == "д" || $SERYI == "да" ]]
 then
+	sudo ufw allow 53/tcp comment "DDNS script"
+	sudo ufw allow 53/udp comment "DDNS script"
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" HOSTNAMESSSS
+	DDNSIPSSS=$HOSTNAMESSSS
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
 	sudo sed -i '/ddns_update.sh/d' /etc/crontab # Удаляет строку если нашла ddns_update.sh
 	sudo rm -f /usr/local/bin/ddns_update.sh
@@ -75,18 +87,17 @@ then
 	sudo sed -i "19i */15 * * * * root /usr/local/bin/ddns_update.sh > /dev/null" /etc/crontab
 	echo "Скрипт ddns_update.sh в /usr/local/bin"
 	echo "Скрипт ddns_update.sh добавлен в /etc/crontab каждые 15 минут"
+	sudo sed -i 's/#CacheFromLocalhost=no/CacheFromLocalhost=yes/g' /etc/systemd/resolved.conf
+	sudo sed -i 's/#DNS=/DNS=127.0.0.1/g' /etc/systemd/resolved.conf
+	HOSTNAMESSSS=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
+	echo "$HOSTNAMESSSS"
+	sudo ufw delete allow 53/tcp
+	sudo ufw delete allow 53/udp
 else
+	sudo sed -i 's/#CacheFromLocalhost=no/CacheFromLocalhost=yes/g' /etc/systemd/resolved.conf
+	sudo sed -i 's/#DNS=/DNS=127.0.0.1/g' /etc/systemd/resolved.conf
     read -p "Пишите IP Статику от провайдера(пример 176.213.115.169):" HOSTNAMESSSS
 fi
-
-sudo apt-get install ufw -y
-sudo apt install ufw -y
-sudo ufw reset
-sudo ufw disable
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw logging on
-sudo ufw logging low
 
 read -p "Нужен ли IPV6 на NAT и UFW?(Y/N):" IPV6666
 if [[ $IPV6666 == "y" || $IPV6666 == "Y" || $IPV6666 == "yes" || $IPV6666 == "Yes" || $IPV6666 == "Д" || $IPV6666 == "Да" || $IPV6666 == "д" || $IPV6666 == "да" ]]
@@ -101,12 +112,12 @@ then
 fi
 
 sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp
-sudo ufw limit $SSH_PORT/tcp comment "SSH limit"
+sudo ufw limit ${SSH_PORT}/tcp comment "SSH limit"
 sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp
 sudo ufw allow in on $WAN to any port $GAME_TCP proto tcp comment "Public ip open to GAME_TCP_Port"
 sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip open to GAME_UDP_Port"
-sudo ufw limit $GAME_TCP/tcp comment "GAME TCP Limit"
-sudo ufw limit $GAME_UDP/udp comment "GAME UDP Limit"
+sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
+sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
 
 #sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_TCP -j DNAT --to-destination $ip_vpn_client
 #sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
@@ -210,6 +221,7 @@ echo "Порт Wireguard:${WIREGUARD_PORT}"
 echo "Порт Игровой TCP:${GAME_TCP}"
 echo "Порт Игровой UDP:${GAME_UDP}"
 echo "IP адрес клиента Wireguard:${ip_vpn_client}"
+echo "Ваш IP публичный адрес DDNS NO-IP(сервера дома):${DDNSIPSSS}"
 echo "Ваш IP публичный адрес (сервера дома):${HOSTNAMESSSS}"
 echo "Имя нового пользователя SSH:${snames}"
 
