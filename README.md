@@ -29,7 +29,8 @@ sudo ./vps_start.sh
 :ufw-gametcp - [0:0]
 :ufw-gameudp-logdrop - [0:0]
 :ufw-gametcp-logdrop - [0:0]
-#End required lines
+# End required lines
+# allow all on loopback
 #ANTIDDOS Rules **************
 -A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT} -j ufw-gametcp
 -A ufw-before-input -p tcp -m multiport --dports ${GAME_TCP} -j ufw-gametcp
