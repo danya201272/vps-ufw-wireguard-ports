@@ -22,7 +22,7 @@ sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-por
 sudo chmod +x vps_start.sh
 sudo ./vps_start.sh
 ```
-## AntiDddos Rules
+## AntiDdos Rules
 ```bash
 *filter
 :ufw-gameudp - [0:0]
