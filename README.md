@@ -44,9 +44,6 @@ sudo vim /etc/ufw/before.rules
 # Limit connections per IP
 -A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --set
 -A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop
-# Limit packets per IP
--A ufw-gametcp -m current --name pack_per_ip --set
--A ufw-gametcp -m current --name pack_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop
 # Finally accept
 -A ufw-gameudp -j ACCEPT
 -A ufw-gametcp -j ACCEPT
