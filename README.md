@@ -24,6 +24,7 @@ sudo ./vps_start.sh
 ```
 ## AntiDddos Rules
 ```bash
+*filter
 :ufw-gameudp - [0:0]
 :ufw-gametcp - [0:0]
 :ufw-gameudp-logdrop - [0:0]
