@@ -13,7 +13,7 @@ if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root"
    exit 1
 fi
-new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
+new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }') host disabralo.ddns.net | head -n1 | cut -f4 -d ' '
 old_ip=$(sudo ufw status | grep $HOSTNAMESSSS | head -n1 | tr -s ' ' | cut -f3 -d ' ')
 if [ "$new_ip" = "$old_ip" ] ; then
     echo IP address has not changed
@@ -22,7 +22,7 @@ if [ "$new_ip" = "$old_ip" ] ; then
 else
     if [ -n "$old_ip" ] ; then
         sudo ufw delete allow from $old_ip to any port $SSH_PORT proto tcp
-        /user/sbin/ufw delete allow from $old_ip to any port $WIREGUARD_PORT proto udp
+        sudo ufw delete allow from $old_ip to any port $WIREGUARD_PORT proto udp
     fi
     sudo ufw allow from $new_ip to any port $SSH_PORT proto tcp comment $HOSTNAMESSSS
     sudo ufw allow from $new_ip to any port $WIREGUARD_PORT proto udp comment $HOSTNAMESSSS

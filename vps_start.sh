@@ -71,29 +71,24 @@ if [[ $SERYI == "y" || $SERYI == "Y" || $SERYI == "yes" || $SERYI == "Yes" || $S
 then
 	sudo ufw allow 53/tcp comment "DDNS script"
 	sudo ufw allow 53/udp comment "DDNS script"
-	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" HOSTNAMESSSS
-	DDNSIPSSS=$HOSTNAMESSSS
+	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" DDNSIPSSS
+	read -p "Введите серый ip адрес от провайдера от локального сервера(179.232.1.1):" HOSTNAMESSSS
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
 	sudo sed -i '/ddns_update.sh/d' /etc/crontab # Удаляет строку если нашла ddns_update.sh
 	sudo rm -f /usr/local/bin/ddns_update.sh
 	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
-	sudo sed -i "2c HOSTNAMESSSS=${HOSTNAMESSSS} # С NO-IP или KeenDNS ip локального пк" ddns_update.sh
+	sudo sed -i "2c HOSTNAMESSSS=${DDNSIPSSS} # С NO-IP ip локального сервера" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo sed -i "4c SSH_PORT=${SSH_PORT} #  SSH Port" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
 	sudo sed -i "19i */15 * * * * root /usr/local/bin/ddns_update.sh > /dev/null" /etc/crontab
 	echo "Скрипт ddns_update.sh в /usr/local/bin"
 	echo "Скрипт ddns_update.sh добавлен в /etc/crontab каждые 15 минут"
-	sudo sed -i 's/#CacheFromLocalhost=no/CacheFromLocalhost=yes/g' /etc/systemd/resolved.conf
-	sudo sed -i 's/#DNS=/DNS=127.0.0.1/g' /etc/systemd/resolved.conf
-	HOSTNAMESSSS=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
 else
-	sudo sed -i 's/#CacheFromLocalhost=no/CacheFromLocalhost=yes/g' /etc/systemd/resolved.conf
-	sudo sed -i 's/#DNS=/DNS=127.0.0.1/g' /etc/systemd/resolved.conf
-    read -p "Пишите IP Статику от провайдера(пример 176.213.115.169):" HOSTNAMESSSS
+    read -p "Пишите IP Статику от провайдера от локального сервера дома(пример 176.213.115.169):" HOSTNAMESSSS
 fi
 
 read -p "Нужен ли IPV6 на NAT и UFW?(Y/N):" IPV6666
@@ -182,7 +177,8 @@ sudo sed -i '/*filter/ a \
 :ufw-gametcp - [0:0]\
 :ufw-gameudp-logdrop - [0:0]\
 :ufw-gametcp-logdrop - [0:0]\
-# **********************DDOS\ ' /etc/ufw/before.rules
+# **********************DDOS\\
+' /etc/ufw/before.rules
 texts1="\"[UFW GAMEUDP DROP]"\"  
 texts2="\"[UFW GAMETCP DROP]"\"
 sudo sed -i "/# allow all on loopback/ a \
@@ -195,9 +191,6 @@ sudo sed -i "/# allow all on loopback/ a \
 # Limit connections per IP\n\
 -A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --set\n\
 -A ufw-gametcp -m state --state NEW -m recent --name conn_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop\n\
-# Limit packets per IP\n\
--A ufw-gametcp -m current --name pack_per_ip --set\n\
--A ufw-gametcp -m current --name pack_per_ip --update --seconds 1 --hitcount 20 -j ufw-gametcp-logdrop\n\
 # Finally accept\n\
 -A ufw-gameudp -j ACCEPT\n\
 -A ufw-gametcp -j ACCEPT\n\
@@ -206,7 +199,8 @@ sudo sed -i "/# allow all on loopback/ a \
 -A ufw-gametcp-logdrop -m limit --limit 3/min --limit-burst 10 -j LOG --log-prefix ${texts2}\n\
 -A ufw-gameudp-logdrop -j DROP\n\
 -A ufw-gametcp-logdrop -j DROP\n\
-# ANTIDDOS Rules ENDS**********\n\ " /etc/ufw/before.rules
+# ANTIDDOS Rules ENDS**********\
+" /etc/ufw/before.rules
 sudo sysctl -p
 fi
 
