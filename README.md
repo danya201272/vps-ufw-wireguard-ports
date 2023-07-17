@@ -16,7 +16,7 @@ Wireguard порт указанный при настройке.
 Для начала работы скрипта нужно прописать команды в консоли ssh на Ubuntu VPS сервере:
 
 ```bash
-sudo apt update && sudo apt full-upgrade -y
+sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y
 sudo apt-get -y install curl
 sudo apt-get -y install bind9-utils
 sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/vps_start.sh
