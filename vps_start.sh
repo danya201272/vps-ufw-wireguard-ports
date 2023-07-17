@@ -22,16 +22,16 @@ then
 	read -p "Введите имя нового пользователя(bino):" snames
 	sudo adduser $snames
 	echo "Это имя:${snames} и пароль нового пользователя ssh"
-	sudo sed -i '/PermitRootLogin/d' /etc/ssh/sshd_config
-	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
-	sudo sed -i "18i PermitRootLogin no" /etc/ssh/sshd_config
+	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
+	sudo sed -i "/PermitRootLogin /c PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
-	echo "Лучше переподключитесь с именем $snames  "
+	echo "Лучше переподключитесь в SSH с именем $snames и с портом $SSH_PORT и пароль,как указали к $snames и ответьте на верхний вопрос после перезахода(No)"
 else
-	sudo sed -i "s|#Port 22|Port ${SSH_PORT}|g" /etc/ssh/sshd_config
+	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
 fi
 
 sudo ip -br a
+
 SERVER_NICCCCC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
 	until [[ ${WAN} =~ ^[a-zA-Z0-9_]+$ ]]; do
 		read -rp "Напиши название интерфейса VPS с доступом в интернет(пример eth0,enp24s0): " -e -i "${SERVER_NICCCCC}" WAN
@@ -54,9 +54,8 @@ sudo curl -O https://raw.githubusercontent.com/angristan/wireguard-install/maste
 sudo chmod +x wireguard-install.sh
 sudo ./wireguard-install.sh
 
-read -rp "Выше в консоли ищите Client WireGuard IPv4:(пример 10.66.66.2):" -e -i "${DOT_IP}" ip_vpn_client
-
-read -rp "Выше в консоли ищите Server WireGuard port [1-65535]:(пример 50821):" -e -i "${SERVER_PORT}" WIREGUARD_PORT
+read -p "Выше в консоли ищите Client WireGuard IPv4:(пример 10.66.66.2):" ip_vpn_client
+read -p "Выше в консоли ищите Server WireGuard port [1-65535]:(пример 50821):" WIREGUARD_PORT
 
 sudo apt-get install ufw -y
 sudo apt install ufw -y
@@ -105,7 +104,6 @@ then
 fi
 
 sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp
-sudo ufw limit ${SSH_PORT}/tcp comment "SSH limit"
 sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp
 sudo ufw allow in on $WAN to any port $GAME_TCP proto tcp comment "Public ip open to GAME_TCP_Port"
 sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip open to GAME_UDP_Port"
@@ -134,11 +132,9 @@ then
 	systemctl start fail2ban
 	systemctl enable fail2ban
 	sudo cp /etc/fail2ban/jail.{conf,local}
-	sudo sed -i '/#ignoreip/d' /etc/fail2ban/jail.local
-	sudo sed -i '/ignoreip =/d' /etc/fail2ban/jail.local
-	sudo sed -i "92i ignoreip = 127.0.0.1/8 ::1 ${ip_vpn_client}" /etc/fail2ban/jail.local
-	sudo sed -i "s|banaction = iptables-multiport|banaction = ufw|g" /etc/fail2ban/jail.local
-	sudo sed -i "s|banaction_allports = iptables-allports|banaction_allports = ufw|g" /etc/fail2ban/jail.local
+	sudo sed -i "/ignoreip =/c ignoreip = 127.0.0.1/8 ::1 ${ip_vpn_client}" /etc/fail2ban/jail.local
+	sudo sed -i "/banaction =/c banaction = ufw" /etc/fail2ban/jail.local
+	sudo sed -i "/banaction_allports =/c banaction_allports = ufw" /etc/fail2ban/jail.local
 	sudo sed -i "s|port = ssh|port = ssh,sshd,${SSH_PORT}|g" /etc/fail2ban/jail.local
 	sudo sed -i "s|port    = ssh|port    = ssh,sshd,${SSH_PORT}|g" /etc/fail2ban/jail.local
 	sudo sed -i "s|port     = ssh|port     = ssh,sshd,${SSH_PORT}|g" /etc/fail2ban/jail.local
@@ -184,7 +180,7 @@ texts1="\"[UFW GAMEUDP DROP]"\"
 texts2="\"[UFW GAMETCP DROP]"\"
 sudo sed -i "/# allow all on loopback/ a \
 # ANTIDDOS Rules **************\n\
--A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT},${GAME_TCP} -j ufw-gametcp\n\
+-A ufw-before-input -p tcp -m multiport --dports ${GAME_TCP} -j ufw-gametcp\n\
 -A ufw-before-input -p udp -m multiport --dports ${GAME_UDP} -j ufw-gameudp\n\
 # Limit connections per Class C\n\
 -A ufw-gametcp -p tcp --syn -m connlimit --connlimit-above 100 --connlimit-mask 24 -j ufw-gametcp-logdrop\n\
