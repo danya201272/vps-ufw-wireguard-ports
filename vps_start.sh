@@ -183,8 +183,7 @@ texts1="\"[UFW GAMEUDP DROP]"\"
 texts2="\"[UFW GAMETCP DROP]"\"
 sudo sed -i "/# allow all on loopback/ a \
 # ANTIDDOS Rules **************\n\
--A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT} -j ufw-gametcp\n\
--A ufw-before-input -p tcp -m multiport --dports ${GAME_TCP} -j ufw-gametcp\n\
+-A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT},${GAME_TCP} -j ufw-gametcp\n\
 -A ufw-before-input -p udp -m multiport --dports ${GAME_UDP} -j ufw-gameudp\n\
 # Limit connections per Class C\n\
 -A ufw-gametcp -p tcp --syn -m connlimit --connlimit-above 100 --connlimit-mask 24 -j ufw-gametcp-logdrop\n\
