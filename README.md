@@ -23,7 +23,10 @@ sudo chmod +x vps_start.sh
 sudo ./vps_start.sh
 ```
 ## AntiDdos Rules
+```bash
 sudo vim /etc/ufw/before.rules
+```
+
 ```bash
 *filter
 :ufw-gameudp - [0:0]
