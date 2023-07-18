@@ -14,8 +14,8 @@ sudo systemctl enable cron
 sudo systemctl enable sshd
 sudo systemctl enable ssh
 
-
-read -p "Введите порт для SSH(22):" SSH_PORT
+sshhelped1=22
+read -rp "Введите порт для SSH(22): " -e -i "${sshhelped1}" SSH_PORT
 
 read -p "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N):" ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
@@ -55,7 +55,9 @@ sudo curl -O https://raw.githubusercontent.com/angristan/wireguard-install/maste
 sudo chmod +x wireguard-install.sh
 sudo ./wireguard-install.sh
 
-read -p "Выше в консоли ищите Client WireGuard IPv4:(пример 10.66.66.2):" ip_vpn_client
+helpssssss1=10.66.66.2
+read -rp "Выше в консоли ищите Client WireGuard IPv4:(пример 10.66.66.2): " -e -i "${helpssssss1}" ip_vpn_client
+
 read -p "Выше в консоли ищите Server WireGuard port [1-65535]:(пример 50821):" WIREGUARD_PORT
 
 sudo apt-get install ufw -y
