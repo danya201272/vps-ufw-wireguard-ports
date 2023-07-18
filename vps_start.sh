@@ -1,5 +1,4 @@
 #!/bin/bash
-VPNS=wg0 # Название интерфейса Wireguard
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get full-upgrade -y
 sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y
 sudo apt-get -y install openssh-server
@@ -14,13 +13,10 @@ sudo systemctl enable cron
 sudo systemctl enable sshd
 sudo systemctl enable ssh
 
-sshhelped1=22
-read -rp "Введите порт для SSH(22): " -e -i "${sshhelped1}" SSH_PORT
 
+read -rp "Введите порт для SSH(22): " -e -i 22 SSH_PORT
 
-yes1234=Y
-no1234=N
-read -rp "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N): " -e -i "${yes1234}" ROOOTS
+read -rp "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N): " -e -i Y ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
 then
 	read -p "Введите имя нового пользователя(bino):" snames
@@ -58,10 +54,11 @@ sudo curl -O https://raw.githubusercontent.com/angristan/wireguard-install/maste
 sudo chmod +x wireguard-install.sh
 sudo ./wireguard-install.sh
 
-helpssssss1=10.66.66.2
-read -rp "Выше в консоли ищите Client WireGuard IPv4:(пример 10.66.66.2): " -e -i "${helpssssss1}" ip_vpn_client
+read -rp "Выше в консоли ищите Client WireGuard IPv4:(пример 10.66.66.2): " -e -i 10.66.66.2 ip_vpn_client
 
 read -p "Выше в консоли ищите Server WireGuard port [1-65535]:(пример 50821):" WIREGUARD_PORT
+
+read -rp "Выше в консоли ищите WireGuard interface name:(пример wg0): " -e -i wg0 VPNSS
 
 sudo apt-get install ufw -y
 sudo apt install ufw -y
@@ -73,7 +70,7 @@ sudo ufw logging on
 sudo ufw logging low
 
 
-read -rp "У вас серый ip с DDNS в локалке за туннелем(Y/N): " -e -i "${yes1234}" SERYI
+read -rp "У вас серый ip с DDNS в локалке за туннелем(Y/N): " -e -i Y SERYI
 if [[ $SERYI == "y" || $SERYI == "Y" || $SERYI == "yes" || $SERYI == "Yes" || $SERYI == "Д" || $SERYI == "Да" || $SERYI == "д" || $SERYI == "да" ]]
 then
 	sudo ufw allow 53/tcp comment "DDNS script"
@@ -100,7 +97,7 @@ else
 fi
 
 
-read -rp "Нужен ли IPV6 на NAT и UFW?(Y/N): " -e -i "${no1234}" IPV6666
+read -rp "Нужен ли IPV6 на NAT и UFW?(Y/N): " -e -i N IPV6666
 if [[ $IPV6666 == "y" || $IPV6666 == "Y" || $IPV6666 == "yes" || $IPV6666 == "Yes" || $IPV6666 == "Д" || $IPV6666 == "Да" || $IPV6666 == "д" || $IPV6666 == "да" ]]
 then
 	sudo sed -i 's|net/ipv6/conf/all/forwarding=0|net/ipv6/conf/all/forwarding=1|g' /etc/ufw/sysctl.conf # IPV6
@@ -118,12 +115,13 @@ sudo ufw allow in on $WAN to any port $GAME_TCP proto tcp comment "Public ip ope
 sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip open to GAME_UDP_Port"
 sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
 sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
+sudo ufw allow in on $VPNSS from $ip_vpn_client to any port $SSH_PORT proto tcp comment "Access VPN client to SSH"
 
-#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_TCP -j DNAT --to-destination $ip_vpn_client
-#sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
+#sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_TCP -j DNAT --to-destination $ip_vpn_client
+#sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_UDP proto udp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p udp -m multiport --dports $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
 
 
-read -rp "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N): " -e -i "${yes1234}" ICMPSSSS
+read -rp "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N): " -e -i Y ICMPSSSS
 if [[ $ICMPSSSS == "y" || $ICMPSSSS == "Y" || $ICMPSSSS == "yes" || $ICMPSSSS == "Yes" || $ICMPSSSS == "Д" || $ICMPSSSS == "Да" || $ICMPSSSS == "д" || $ICMPSSSS == "да" ]]
 then
 	sudo sysctl -w net.ipv4.icmp_echo_ignore_all=1 # Блокировка ICMP
@@ -135,7 +133,7 @@ else
 fi
 
 
-read -rp "Нужен ли fail2ban на SSH?(Y/N): " -e -i "${yes1234}" FAIL2TOBANSSS
+read -rp "Нужен ли fail2ban на SSH?(Y/N): " -e -i Y FAIL2TOBANSSS
 if [[ $FAIL2TOBANSSS == "y" || $FAIL2TOBANSSS == "Y" || $FAIL2TOBANSSS == "yes" || $FAIL2TOBANSSS == "Yes" || $FAIL2TOBANSSS == "Д" || $FAIL2TOBANSSS == "Да" || $FAIL2TOBANSSS == "д" || $FAIL2TOBANSSS == "да" ]]
 then
 	sudo apt-get install fail2ban -y
@@ -177,7 +175,7 @@ sudo sysctl -p
 sudo service cron reload
 
 
-read -rp "Нужен ли AntiDDOS на TCP/UDP?(Y/N): " -e -i "${yes1234}" ANTIDDOSSSS
+read -rp "Нужен ли AntiDDOS на TCP/UDP?(Y/N): " -e -i Y ANTIDDOSSSS
 if [[ $ANTIDDOSSSS == "y" || $ANTIDDOSSSS == "Y" || $ANTIDDOSSSS == "yes" || $ANTIDDOSSSS == "Yes" || $ANTIDDOSSSS == "Д" || $ANTIDDOSSSS == "Да" || $ANTIDDOSSSS == "д" || $ANTIDDOSSSS == "да" ]]
 then
 sudo sed -i '/*filter/ a \
@@ -225,7 +223,7 @@ echo "Ваш IP публичный адрес (сервера дома):${HOSTNA
 echo "Имя нового пользователя SSH:${snames}"
 
 
-read -rp "Перезагрузить VPS?(Y/N): " -e -i "${yes1234}" VPSRESTARTSSS
+read -rp "Перезагрузить VPS?(Y/N): " -e -i Y VPSRESTARTSSS
 if [[ $VPSRESTARTSSS == "y" || $VPSRESTARTSSS == "Y" || $VPSRESTARTSSS == "yes" || $VPSRESTARTSSS == "Yes" || $VPSRESTARTSSS == "Д" || $VPSRESTARTSSS == "Да" || $VPSRESTARTSSS == "д" || $VPSRESTARTSSS == "да" ]]
 then
 	sudo reboot now
