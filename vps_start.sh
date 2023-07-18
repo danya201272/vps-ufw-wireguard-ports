@@ -17,7 +17,9 @@ sudo systemctl enable ssh
 sshhelped1=22
 read -rp "Введите порт для SSH(22): " -e -i "${sshhelped1}" SSH_PORT
 
-read -p "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N):" ROOOTS
+
+yes1234=Y
+read -rp "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N): " -e -i "${yes1234}" ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
 then
 	read -p "Введите имя нового пользователя(bino):" snames
@@ -69,7 +71,8 @@ sudo ufw default allow outgoing
 sudo ufw logging on
 sudo ufw logging low
 
-read -p "У вас серый ip с DDNS в локалке за туннелем(Y/N):" SERYI
+
+read -rp "У вас серый ip с DDNS в локалке за туннелем(Y/N): " -e -i "${yes1234}" SERYI
 if [[ $SERYI == "y" || $SERYI == "Y" || $SERYI == "yes" || $SERYI == "Yes" || $SERYI == "Д" || $SERYI == "Да" || $SERYI == "д" || $SERYI == "да" ]]
 then
 	sudo ufw allow 53/tcp comment "DDNS script"
@@ -117,7 +120,8 @@ sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
 #sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_TCP -j DNAT --to-destination $ip_vpn_client
 #sudo ufw route allow in on $WAN out on $VPNS to $ip_vpn_client port $GAME_UDP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
 
-read -p "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N):" ICMPSSSS
+
+read -rp "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N): " -e -i "${yes1234}" ICMPSSSS
 if [[ $ICMPSSSS == "y" || $ICMPSSSS == "Y" || $ICMPSSSS == "yes" || $ICMPSSSS == "Yes" || $ICMPSSSS == "Д" || $ICMPSSSS == "Да" || $ICMPSSSS == "д" || $ICMPSSSS == "да" ]]
 then
 	sudo sysctl -w net.ipv4.icmp_echo_ignore_all=1 # Блокировка ICMP
@@ -128,7 +132,8 @@ else
 	sudo sed -i '/ufw-before-input.*icmp/s/DROP/ACCEPT/g' /etc/ufw/before.rules
 fi
 
-read -p "Нужен ли fail2ban на SSH?(Y/N):" FAIL2TOBANSSS
+
+read -rp "Нужен ли fail2ban на SSH?(Y/N): " -e -i "${yes1234}" FAIL2TOBANSSS
 if [[ $FAIL2TOBANSSS == "y" || $FAIL2TOBANSSS == "Y" || $FAIL2TOBANSSS == "yes" || $FAIL2TOBANSSS == "Yes" || $FAIL2TOBANSSS == "Д" || $FAIL2TOBANSSS == "Да" || $FAIL2TOBANSSS == "д" || $FAIL2TOBANSSS == "да" ]]
 then
 	sudo apt-get install fail2ban -y
@@ -169,7 +174,8 @@ sudo sed -i '11i COMMIT' /etc/ufw/before.rules
 sudo sysctl -p
 sudo service cron reload
 
-read -p "Нужен ли AntiDDOS на TCP/UDP?(Y/N):" ANTIDDOSSSS
+
+read -rp "Нужен ли AntiDDOS на TCP/UDP?(Y/N): " -e -i "${yes1234}" ANTIDDOSSSS
 if [[ $ANTIDDOSSSS == "y" || $ANTIDDOSSSS == "Y" || $ANTIDDOSSSS == "yes" || $ANTIDDOSSSS == "Yes" || $ANTIDDOSSSS == "Д" || $ANTIDDOSSSS == "Да" || $ANTIDDOSSSS == "д" || $ANTIDDOSSSS == "да" ]]
 then
 sudo sed -i '/*filter/ a \
@@ -216,7 +222,8 @@ echo "Ваш IP публичный адрес DDNS NO-IP(сервера дома
 echo "Ваш IP публичный адрес (сервера дома):${HOSTNAMESSSS}"
 echo "Имя нового пользователя SSH:${snames}"
 
-read -p "Перезагрузить VPS?(Y/N)" VPSRESTARTSSS
+
+read -rp "Перезагрузить VPS?(Y/N): " -e -i "${yes1234}" VPSRESTARTSSS
 if [[ $VPSRESTARTSSS == "y" || $VPSRESTARTSSS == "Y" || $VPSRESTARTSSS == "yes" || $VPSRESTARTSSS == "Yes" || $VPSRESTARTSSS == "Д" || $VPSRESTARTSSS == "Да" || $VPSRESTARTSSS == "д" || $VPSRESTARTSSS == "да" ]]
 then
 	sudo reboot now
