@@ -107,8 +107,8 @@ then
 	sudo sysctl -p
 fi
 
-sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp comment $DDNSIPSSS
-sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp comment $DDNSIPSSS
+sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp comment "$DDNSIPSSS SSH"
+sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp comment "$DDNSIPSSS WIREGUARD"
 sudo ufw allow in on $WAN to any port $GAME_TCP proto tcp comment "Public ip open to GAME_TCP_Port"
 sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip open to GAME_UDP_Port"
 sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
