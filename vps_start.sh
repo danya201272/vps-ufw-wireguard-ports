@@ -83,9 +83,9 @@ then
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo sed -i "4c SSH_PORT=${SSH_PORT} #  SSH Port" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
-	(crontab -l 2>/dev/null; echo "*/5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | crontab -
-	echo "Скрипт ddns_update.sh в /usr/local/bin"
-	echo "Скрипт ddns_update.sh добавлен в crontab -l каждые 5 минут"
+	(sudo crontab -l 2>/dev/null; echo "*/3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
+	echo "Скрипт ddns_update.sh в /usr/local/bin/ddns_update.sh"
+	echo "Скрипт ddns_update.sh добавлен в sudo crontab -l каждые 3 минуты"
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
 else
@@ -104,8 +104,8 @@ then
 	sudo sysctl -p
 fi
 
-sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp
-sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp
+sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp comment $DDNSIPSSS
+sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp comment $DDNSIPSSS
 sudo ufw allow in on $WAN to any port $GAME_TCP proto tcp comment "Public ip open to GAME_TCP_Port"
 sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip open to GAME_UDP_Port"
 sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"

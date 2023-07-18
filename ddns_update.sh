@@ -7,11 +7,11 @@ sudo ufw allow 53/tcp comment "DDNS script"
 sudo ufw allow 53/udp comment "DDNS script"
 #IF IT DOES NOT WORK, AT LEAST ON UBUNTU INSTALL, bind-utils to get the host command
 #sudo crontab -e
-#Create a cron */5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1
+#Create a cron */3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1
 
-#IN bash scrypt echo "*/5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1" | sudo tee -a /var/spool/cron/root
+#IN bash scrypt echo (sudo crontab -l 2>/dev/null; echo "*/3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
 
-new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }') host disabralo.ddns.net | head -n1 | cut -f4 -d ' '
+new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
 old_ip=$(sudo ufw status | grep $HOSTNAMESSSS | head -n1 | tr -s ' ' | cut -f3 -d ' ')
 if [ "$new_ip" = "$old_ip" ] ; then
     echo IP address has not changed
@@ -21,8 +21,6 @@ else
     if [ -n "$old_ip" ] ; then
         sudo ufw delete allow from $old_ip to any port $SSH_PORT proto tcp
         sudo ufw delete allow from $old_ip to any port $WIREGUARD_PORT proto udp
-		sudo ufw delete allow 53/tcp
-		sudo ufw delete allow 53/udp
     fi
     sudo ufw allow from $new_ip to any port $SSH_PORT proto tcp comment $HOSTNAMESSSS
     sudo ufw allow from $new_ip to any port $WIREGUARD_PORT proto udp comment $HOSTNAMESSSS
