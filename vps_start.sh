@@ -220,7 +220,6 @@ then
 	sudo reboot -f
 	sudo shutdown -r now
 	sudo systemctl reboot
-	sudo service ssh restart
 else
 	exit 0
 fi
