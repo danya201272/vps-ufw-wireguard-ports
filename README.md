@@ -31,7 +31,7 @@ sudo ./vps_start.sh
 ```
 ## AntiDdos Rules UFW
 ```bash
-sudo vim /etc/ufw/before.rules
+sudo cat /etc/ufw/before.rules
 ```
 
 ```bash
