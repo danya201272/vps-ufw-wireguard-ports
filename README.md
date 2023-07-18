@@ -16,9 +16,17 @@ Wireguard порт указанный при настройке.
 
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y
+```
+```bash
 sudo apt-get -y install curl
+```
+```bash
 sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/vps_start.sh
+```
+```bash
 sudo chmod +x vps_start.sh
+```
+```bash
 sudo ./vps_start.sh
 ```
 ## AntiDdos Rules UFW
