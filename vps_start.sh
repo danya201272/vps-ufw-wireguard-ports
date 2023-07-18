@@ -74,7 +74,7 @@ then
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" DDNSIPSSS
 	HOSTNAMESSSS=$(host $DDNSIPSSS | head -n1 | cut -f4 -d ' ')
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
-	sudo sed -i '/ddns_update.sh/d' /var/spool/cron/root # Удаляет строку если нашла ddns_update.sh
+	crontab -l | grep -v 'root /usr/local/bin/ddns_update.sh'  | crontab -
 	sudo rm -f /usr/local/bin/ddns_update.sh
 	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
@@ -82,9 +82,9 @@ then
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo sed -i "4c SSH_PORT=${SSH_PORT} #  SSH Port" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
-	echo "*/5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1" | sudo tee -a /var/spool/cron/root
+	(crontab -l 2>/dev/null; echo "*/5 * * * * root /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | crontab -
 	echo "Скрипт ddns_update.sh в /usr/local/bin"
-	echo "Скрипт ddns_update.sh добавлен в /var/spool/cron/root каждые 5 минут"
+	echo "Скрипт ddns_update.sh добавлен в crontab -l каждые 5 минут"
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
 else

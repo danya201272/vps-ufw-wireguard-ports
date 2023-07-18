@@ -1,5 +1,5 @@
 #!/bin/bash
-HOSTNAMESSSS=vvvs.keenetick.pro # С NO-IP или KeenDNS ip локального пк
+HOSTNAMESSSS=disabralo.ddns.net # С NO-IP или KeenDNS ip локального пк
 WIREGUARD_PORT=50820 # WIREGUARD Порт
 SSH_PORT=22 #  SSH Port
 
@@ -21,6 +21,8 @@ else
     if [ -n "$old_ip" ] ; then
         sudo ufw delete allow from $old_ip to any port $SSH_PORT proto tcp
         sudo ufw delete allow from $old_ip to any port $WIREGUARD_PORT proto udp
+		sudo ufw delete allow 53/tcp
+		sudo ufw delete allow 53/udp
     fi
     sudo ufw allow from $new_ip to any port $SSH_PORT proto tcp comment $HOSTNAMESSSS
     sudo ufw allow from $new_ip to any port $WIREGUARD_PORT proto udp comment $HOSTNAMESSSS
