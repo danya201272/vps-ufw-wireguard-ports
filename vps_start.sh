@@ -221,7 +221,8 @@ echo "IP адрес клиента Wireguard:${ip_vpn_client}"
 echo "Ваш IP публичный адрес DDNS NO-IP(сервера дома):${DDNSIPSSS}"
 echo "Ваш IP публичный адрес (сервера дома):${HOSTNAMESSSS}"
 echo "Имя нового пользователя SSH:${snames}"
-
+echo "Файл конфигурациий для клиента Wireguard сохранять в .conf"
+sudo cat `sudo find /root/ -type f -name "*.conf"`
 
 read -rp "Перезагрузить VPS?(Y/N): " -e -i Y VPSRESTARTSSS
 if [[ $VPSRESTARTSSS == "y" || $VPSRESTARTSSS == "Y" || $VPSRESTARTSSS == "yes" || $VPSRESTARTSSS == "Yes" || $VPSRESTARTSSS == "Д" || $VPSRESTARTSSS == "Да" || $VPSRESTARTSSS == "д" || $VPSRESTARTSSS == "да" ]]
