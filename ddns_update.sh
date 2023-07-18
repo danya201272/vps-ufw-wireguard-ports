@@ -25,8 +25,8 @@ else
         sudo ufw delete allow from $FIRST_IP to any port $SSH_PORT proto tcp
         sudo ufw delete allow from $FIRST_IP to any port $WIREGUARD_PORT proto udp
     fi
-    sudo ufw allow from $new_ip to any port $SSH_PORT proto tcp comment $HOSTNAMESSSS  SSH
-    sudo ufw allow from $new_ip to any port $WIREGUARD_PORT proto udp comment $HOSTNAMESSSS WIREGUARD
+    sudo ufw allow from $new_ip to any port $SSH_PORT proto tcp comment "$HOSTNAMESSSS  SSH"
+    sudo ufw allow from $new_ip to any port $WIREGUARD_PORT proto udp comment "$HOSTNAMESSSS WIREGUARD"
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
     echo UFW have been updated
