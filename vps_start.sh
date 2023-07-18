@@ -19,6 +19,7 @@ read -rp "Введите порт для SSH(22): " -e -i "${sshhelped1}" SSH_PO
 
 
 yes1234=Y
+no1234=N
 read -rp "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N): " -e -i "${yes1234}" ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
 then
@@ -98,7 +99,8 @@ else
     read -p "Пишите IP Статику от провайдера от локального сервера дома(пример 176.213.115.169):" HOSTNAMESSSS
 fi
 
-read -p "Нужен ли IPV6 на NAT и UFW?(Y/N):" IPV6666
+
+read -rp "Нужен ли IPV6 на NAT и UFW?(Y/N): " -e -i "${no1234}" IPV6666
 if [[ $IPV6666 == "y" || $IPV6666 == "Y" || $IPV6666 == "yes" || $IPV6666 == "Yes" || $IPV6666 == "Д" || $IPV6666 == "Да" || $IPV6666 == "д" || $IPV6666 == "да" ]]
 then
 	sudo sed -i 's|net/ipv6/conf/all/forwarding=0|net/ipv6/conf/all/forwarding=1|g' /etc/ufw/sysctl.conf # IPV6
