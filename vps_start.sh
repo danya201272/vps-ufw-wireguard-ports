@@ -107,18 +107,25 @@ then
 	sudo sed -i 's|IPV6=no|IPV6=yes|g' /etc/default/ufw # IPV6
 	sudo sed -i 's|#IPV6=no|IPV6=yes|g' /etc/default/ufw  # IPV6
 	sudo sysctl -p
+else
+	sudo sed -i 's|net/ipv6/conf/all/forwarding=1|net/ipv6/conf/all/forwarding=0|g' /etc/ufw/sysctl.conf # IPV6
+	sudo sed -i 's|#net/ipv6/conf/all/forwarding=1|net/ipv6/conf/all/forwarding=0|g' /etc/ufw/sysctl.conf  # IPV6
+	sudo sed -i 's|net/ipv6/conf/default/forwarding=1|net/ipv6/conf/default/forwarding=0|g' /etc/ufw/sysctl.conf # IPV6
+	sudo sed -i 's|#net/ipv6/conf/default/forwarding=1|net/ipv6/conf/default/forwarding=0|g' /etc/ufw/sysctl.conf  # IPV6
+	sudo sed -i 's|IPV6=yes|IPV6=no|g' /etc/default/ufw # IPV6
+	sudo sed -i 's|#IPV6=yes|IPV6=no|g' /etc/default/ufw  # IPV6
+	sudo sysctl -p
 fi
 
 sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp comment "$DDNSIPSSS SSH"
 sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp comment "$DDNSIPSSS WIREGUARD"
-sudo ufw allow in on $WAN to any port $GAME_TCP proto tcp comment "Public ip open to GAME_TCP_Port"
-sudo ufw allow in on $WAN to any port $GAME_UDP proto udp comment "Public ip open to GAME_UDP_Port"
+sudo ufw allow $GAME_TCP/tcp comment "Public ip open to GAME_TCP_Port"
+sudo ufw allow $GAME_UDP/udp comment "Public ip open to GAME_UDP_Port"
 sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
 sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
 sudo ufw allow in on $VPNSS from $ip_vpn_client to any port $SSH_PORT proto tcp comment "Access VPN client to SSH"
-
-#sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_TCP proto tcp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p tcp -m multiport --dports $GAME_TCP -j DNAT --to-destination $ip_vpn_client
-#sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_UDP proto udp  | /etc/ufw/before.rules -A PREROUTING -i $WAN -p udp -m multiport --dports $GAME_UDP -j DNAT --to-destination $ip_vpn_client 
+sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_TCP proto tcp comment "IN WAN to vpn client"
+sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_UDP proto udp comment "IN WAN to vpn client"
 
 
 read -rp "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N): " -e -i Y ICMPSSSS
@@ -165,8 +172,8 @@ sudo sed -i '2i *nat' /etc/ufw/before.rules
 sudo sed -i '3i :PREROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '4i :POSTROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '5i # Port Forwardings' /etc/ufw/before.rules
-sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules # "" для работы подстановки переменных 
-sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
+#sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules # "" для работы подстановки переменных 
+#sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
 sudo sed -i "8i # Forward traffic through ${WAN} - Change to match you out-interface" /etc/ufw/before.rules
 sudo sed -i "9i -A POSTROUTING -o ${WAN} -j MASQUERADE" /etc/ufw/before.rules
 sudo sed -i '10i # dont delete the COMMIT line or these nat table rules wont' /etc/ufw/before.rules
