@@ -82,10 +82,11 @@ then
 	sudo sed -i "2c HOSTNAMESSSS=${DDNSIPSSS} # С NO-IP ip локального сервера" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo sed -i "4c SSH_PORT=${SSH_PORT} #  SSH Port" ddns_update.sh
+	sudo sed -i "5c FIRST_IP=${HOSTNAMESSSS} # Первое серое IP c DDNS адреса" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
-	(sudo crontab -l 2>/dev/null; echo "*/3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
+	(sudo crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
 	echo "Скрипт ddns_update.sh в /usr/local/bin/ddns_update.sh"
-	echo "Скрипт ddns_update.sh добавлен в sudo crontab -l каждые 3 минуты"
+	echo "Скрипт ddns_update.sh добавлен в sudo crontab -l каждые 5 минут"
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
 else

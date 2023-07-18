@@ -2,6 +2,7 @@
 HOSTNAMESSSS=disabralo.ddns.net # С NO-IP или KeenDNS ip локального пк
 WIREGUARD_PORT=50820 # WIREGUARD Порт
 SSH_PORT=22 #  SSH Port
+FIRST_IP=176.213.113.109 # Первое серое IP c DDNS адреса
 
 sudo ufw allow 53/tcp comment "DDNS script"
 sudo ufw allow 53/udp comment "DDNS script"
@@ -9,7 +10,7 @@ sudo ufw allow 53/udp comment "DDNS script"
 #sudo crontab -e
 #Create a cron */3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1
 
-#IN bash scrypt echo (sudo crontab -l 2>/dev/null; echo "*/3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
+#IN bash scrypt echo (sudo crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
 
 new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
 old_ip=$(sudo ufw status | grep $HOSTNAMESSSS | head -n1 | tr -s ' ' | cut -f3 -d ' ')
@@ -21,6 +22,8 @@ else
     if [ -n "$old_ip" ] ; then
         sudo ufw delete allow from $old_ip to any port $SSH_PORT proto tcp
         sudo ufw delete allow from $old_ip to any port $WIREGUARD_PORT proto udp
+		sudo ufw delete allow from $FIRST_IP to any port $SSH_PORT proto tcp
+        sudo ufw delete allow from $FIRST_IP to any port $WIREGUARD_PORT proto udp
     fi
     sudo ufw allow from $new_ip to any port $SSH_PORT proto tcp comment $HOSTNAMESSSS
     sudo ufw allow from $new_ip to any port $WIREGUARD_PORT proto udp comment $HOSTNAMESSSS
