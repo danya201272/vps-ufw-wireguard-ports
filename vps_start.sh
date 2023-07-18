@@ -12,6 +12,7 @@ sudo apt install bind9-utils -y
 sudo apt install cron -y
 sudo systemctl enable cron
 sudo systemctl enable sshd
+sudo systemctl enable ssh
 
 
 read -p "Введите порт для SSH(22):" SSH_PORT
