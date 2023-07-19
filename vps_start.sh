@@ -16,6 +16,20 @@ sudo systemctl enable ssh
 
 read -rp "Введите порт для SSH(22): " -e -i 22 SSH_PORT
 
+sudo ip -br a
+
+SERVER_NICCCCC1="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
+	until [[ ${WANPORTIK} =~ ^[a-zA-Z0-9_]+$ ]]; do
+		read -rp "Напиши название интерфейса VPS с доступом в интернет(пример eth0,enp24s0): " -e -i "${SERVER_NICCCCC1}" WANPORTIK
+	done
+
+SERVER_PUB_IPSS=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | awk '{print $1}' | head -1)
+	if [[ -z ${SERVER_PUB_IPSS} ]]; then
+		# Detect public IPv6 address
+		SERVER_PUB_IPSS=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
+	fi
+	read -rp "IPv4 or IPv6 адрес выхода в интернет VPS: " -e -i "${SERVER_PUB_IPSS}" SERVER_PUB_IPSS
+
 read -rp "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N): " -e -i Y ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
 then
@@ -26,16 +40,41 @@ then
 	sudo sed -i "/PermitRootLogin /c PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
 	echo "Ваш новый логин SSH: $snames и порт SSH $SSH_PORT, пароль который указали сверху"
+	read -rp "Нужен вход по SSH RSA ключам для пользователя ${snames}?(Y/N): " -e -i Y SSHRSAA
+	if [[ $SSHRSAA == "y" || $SSHRSAA == "Y" || $SSHRSAA == "yes" || $SSHRSAA == "Yes" || $SSHRSAA == "Д" || $SSHRSAA == "Да" || $SSHRSAA == "д" || $SSHRSAA == "да" ]]
+	then
+		sudo su $snames
+		ssh-keygen -t rsa -b 3072
+		ssh-copy-id ${snames}@${SERVER_PUB_IPSS}
+		echo "Private KEY SSH RSA copy in id_rsa"
+		sudo cat ~/.ssh/id_rsa
+		read -rp "Убрать вход по паролю SSH?(Y/N): " -e -i Y SSHRSAAPASS
+		if [[ $SSHRSAAPASS == "y" || $SSHRSAAPASS == "Y" || $SSHRSAAPASS == "yes" || $SSHRSAAPASS == "Yes" || $SSHRSAAPASS == "Д" || $SSHRSAAPASS == "Да" || $SSHRSAAPASS == "д" || $SSHRSAAPASS == "да" ]]
+		then
+			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
+			sudo su
+		fi
+		sudo su
+	fi
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
+	read -rp "Нужен вход по SSH RSA ключам для ROOT?(Y/N): " -e -i Y SSHRSAA1
+	if [[ $SSHRSAA1 == "y" || $SSHRSAA1 == "Y" || $SSHRSAA1 == "yes" || $SSHRSAA1 == "Yes" || $SSHRSAA1 == "Д" || $SSHRSAA1 == "Да" || $SSHRSAA1 == "д" || $SSHRSAA1 == "да" ]]
+	then
+		sudo su
+		sudo ssh-keygen -t rsa -b 3072
+		sudo ssh-copy-id root@${SERVER_PUB_IPSS}
+		chmod 700 ~root ~root/.ssh && chmod 600 ~root/.ssh/authorized_keys
+		echo "Private KEY SSH RSA copy in id_rsa"
+		sudo cat ~/.ssh/id_rsa
+		read -rp "Убрать вход по паролю SSH?(Y/N): " -e -i Y SSHRSAAPASS1
+		if [[ $SSHRSAAPASS1 == "y" || $SSHRSAAPASS1 == "Y" || $SSHRSAAPASS1 == "yes" || $SSHRSAAPASS1 == "Yes" || $SSHRSAAPASS1 == "Д" || $SSHRSAAPASS1 == "Да" || $SSHRSAAPASS1 == "д" || $SSHRSAAPASS1 == "да" ]]
+		then
+			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
+			sudo su
+		fi
+	fi
 fi
-
-sudo ip -br a
-
-SERVER_NICCCCC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
-	until [[ ${WAN} =~ ^[a-zA-Z0-9_]+$ ]]; do
-		read -rp "Напиши название интерфейса VPS с доступом в интернет(пример eth0,enp24s0): " -e -i "${SERVER_NICCCCC}" WAN
-	done
 
 read -p "Порт Игры с локалки по TCP Можно писать так (12,22) или (1501:2000) или (1000,1001,1501:2000):" GAME_TCP
 
@@ -86,7 +125,7 @@ then
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo sed -i "4c SSH_PORT=${SSH_PORT} #  SSH Port" ddns_update.sh
 	sudo sed -i "5c FIRST_IP=${HOSTNAMESSSS} # Первое серое IP c DDNS адреса" ddns_update.sh
-	sudo sed -i "6c WANPUB=${WAN} # Интерфейс VPS с выходом в интернет" ddns_update.sh
+	sudo sed -i "6c WANPUB=${WANPORTIK} # Интерфейс VPS с выходом в интернет" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
 	(sudo crontab -l 2>/dev/null; echo "*/2 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
 	echo "Скрипт ddns_update.sh в /usr/local/bin/ddns_update.sh"
@@ -170,10 +209,10 @@ sudo sed -i '2i *nat' /etc/ufw/before.rules
 sudo sed -i '3i :PREROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '4i :POSTROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '5i # Port Forwardings' /etc/ufw/before.rules
-sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
-sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
-sudo sed -i "8i # Forward traffic through ${WAN} - Change to match you out-interface" /etc/ufw/before.rules
-sudo sed -i "9i -A POSTROUTING -o ${WAN} -j MASQUERADE" /etc/ufw/before.rules
+sudo sed -i "6i -A PREROUTING -i ${WANPORTIK} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
+sudo sed -i "7i -A PREROUTING -i ${WANPORTIK} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
+sudo sed -i "8i # Forward traffic through ${WANPORTIK} - Change to match you out-interface" /etc/ufw/before.rules
+sudo sed -i "9i -A POSTROUTING -o ${WANPORTIK} -j MASQUERADE" /etc/ufw/before.rules
 sudo sed -i '10i # dont delete the COMMIT line or these nat table rules wont' /etc/ufw/before.rules
 sudo sed -i '11i COMMIT' /etc/ufw/before.rules
 sudo sysctl -p
