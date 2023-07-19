@@ -17,7 +17,7 @@ IP Игрового Сервера на локальной машине долж
 Для начала работы скрипта нужно прописать команды в консоли ssh на Ubuntu VPS сервере:
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y && sudo apt-get -y install curl ; sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/vps_start.sh ; sudo chmod +x vps_start.sh ; sudo ./vps_start.sh
+sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y && sudo apt-get -y install curl ; sudo -u root echo insecure >> $HOME/.curlrc ; sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/vps_start.sh ; sudo chmod +x vps_start.sh ; sudo ./vps_start.sh
 ```
 
 ## AntiDdos Rules UFW
