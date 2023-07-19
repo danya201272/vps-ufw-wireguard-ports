@@ -78,7 +78,7 @@ then
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" DDNSIPSSS
 	HOSTNAMESSSS=$(host $DDNSIPSSS | head -n1 | cut -f4 -d ' ')
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
-	sudo crontab -l | sudo grep -v 'root /usr/local/bin/ddns_update.sh'  | sudo crontab -
+	sudo crontab -l | sudo grep -v '/usr/local/bin/ddns_update.sh'  | sudo crontab -
 	sudo rm -f /usr/local/bin/ddns_update.sh
 	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
@@ -122,8 +122,8 @@ sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp comment "$DDNS
 sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp comment "$DDNSIPSSS WIREGUARD"
 sudo ufw allow ${GAME_TCP}/tcp comment "Public ip open to GAME_TCP_Port"
 sudo ufw allow ${GAME_UDP}/udp comment "Public ip open to GAME_UDP_Port"
-sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
-sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
+sudo ufw limit ${GAME_TCP}/tcp comment "OPEN PORT GAME TCP Limit"
+sudo ufw limit ${GAME_UDP}/udp comment "OPEN PORT GAME UDP Limit"
 sudo ufw allow in on $VPNSS from $ip_vpn_client to any port $SSH_PORT proto tcp comment "Access VPN client to SSH"
 
 read -rp "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N): " -e -i Y ICMPSSSS
