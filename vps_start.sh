@@ -120,8 +120,8 @@ fi
 
 sudo ufw allow from $HOSTNAMESSSS to any port $SSH_PORT proto tcp comment "$DDNSIPSSS SSH"
 sudo ufw allow from $HOSTNAMESSSS to any port $WIREGUARD_PORT proto udp comment "$DDNSIPSSS WIREGUARD"
-sudo ufw allow $GAME_TCP/tcp comment "Public ip open to GAME_TCP_Port"
-sudo ufw allow $GAME_UDP/udp comment "Public ip open to GAME_UDP_Port"
+sudo ufw allow ${GAME_TCP}/tcp comment "Public ip open to GAME_TCP_Port"
+sudo ufw allow ${GAME_UDP}/udp comment "Public ip open to GAME_UDP_Port"
 sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
 sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
 sudo ufw allow in on $VPNSS from $ip_vpn_client to any port $SSH_PORT proto tcp comment "Access VPN client to SSH"
