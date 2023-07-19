@@ -3,6 +3,7 @@ HOSTNAMESSSS=disabralo.ddns.net # С NO-IP или KeenDNS ip локальног�
 WIREGUARD_PORT=50820 # WIREGUARD Порт
 SSH_PORT=22 #  SSH Port
 FIRST_IP=176.213.113.109 # Первое серое IP c DDNS адреса
+WANPUB=ens3 # Интерфейс VPS с выходом в интернет
 
 sudo ufw allow 53/tcp comment "DDNS script"
 sudo ufw allow 53/udp comment "DDNS script"
@@ -11,8 +12,15 @@ sudo ufw allow 53/udp comment "DDNS script"
 #Create a cron */3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1
 
 #IN bash scrypt echo (sudo crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
+pubsss=$(ip --brief address show $WANPUB | awk '{print $3}' | cut -d'/' -f1)
+ipss=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ')
+if [ "$ipss" = "$pubsss" ] ; then
+sudo ufw delete allow 53/tcp
+sudo ufw delete allow 53/udp
+exit 0
+fi
 
-new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #HOSTNAMESSSS=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
+new_ip=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ') #new_ip=$(getent hosts $HOSTNAMESSSS | awk '{ print $1 }')
 old_ip=$(sudo ufw status | grep $HOSTNAMESSSS | head -n1 | tr -s ' ' | cut -f3 -d ' ')
 if [ "$new_ip" = "$old_ip" ] ; then
     echo IP address has not changed

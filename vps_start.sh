@@ -86,10 +86,11 @@ then
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
 	sudo sed -i "4c SSH_PORT=${SSH_PORT} #  SSH Port" ddns_update.sh
 	sudo sed -i "5c FIRST_IP=${HOSTNAMESSSS} # Первое серое IP c DDNS адреса" ddns_update.sh
+	sudo sed -i "6c WANPUB=$WAN # Интерфейс VPS с выходом в интернет" ddns_update.sh
 	sudo mv -f ddns_update.sh /usr/local/bin
-	(sudo crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
+	(sudo crontab -l 2>/dev/null; echo "*/2 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
 	echo "Скрипт ddns_update.sh в /usr/local/bin/ddns_update.sh"
-	echo "Скрипт ddns_update.sh добавлен в sudo crontab -l каждые 5 минут"
+	echo "Скрипт ddns_update.sh добавлен в sudo crontab -l каждые 2 минуты"
 	sudo ufw delete allow 53/tcp
 	sudo ufw delete allow 53/udp
 else
@@ -124,9 +125,6 @@ sudo ufw allow $GAME_UDP/udp comment "Public ip open to GAME_UDP_Port"
 sudo ufw limit ${GAME_TCP}/tcp comment "GAME TCP Limit"
 sudo ufw limit ${GAME_UDP}/udp comment "GAME UDP Limit"
 sudo ufw allow in on $VPNSS from $ip_vpn_client to any port $SSH_PORT proto tcp comment "Access VPN client to SSH"
-sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_TCP proto tcp comment "IN WAN to vpn client"
-sudo ufw route allow in on $WAN out on $VPNSS to $ip_vpn_client port $GAME_UDP proto udp comment "IN WAN to vpn client"
-
 
 read -rp "Нужна ли Блокировка ICMP (лучше включить блокировку)(Y/N): " -e -i Y ICMPSSSS
 if [[ $ICMPSSSS == "y" || $ICMPSSSS == "Y" || $ICMPSSSS == "yes" || $ICMPSSSS == "Yes" || $ICMPSSSS == "Д" || $ICMPSSSS == "Да" || $ICMPSSSS == "д" || $ICMPSSSS == "да" ]]
@@ -172,8 +170,8 @@ sudo sed -i '2i *nat' /etc/ufw/before.rules
 sudo sed -i '3i :PREROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '4i :POSTROUTING ACCEPT [0:0]' /etc/ufw/before.rules
 sudo sed -i '5i # Port Forwardings' /etc/ufw/before.rules
-#sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules # "" для работы подстановки переменных 
-#sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
+sudo sed -i "6i -A PREROUTING -i ${WAN} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
+sudo sed -i "7i -A PREROUTING -i ${WAN} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
 sudo sed -i "8i # Forward traffic through ${WAN} - Change to match you out-interface" /etc/ufw/before.rules
 sudo sed -i "9i -A POSTROUTING -o ${WAN} -j MASQUERADE" /etc/ufw/before.rules
 sudo sed -i '10i # dont delete the COMMIT line or these nat table rules wont' /etc/ufw/before.rules
