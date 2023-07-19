@@ -9,9 +9,9 @@ sudo ufw allow 53/tcp comment "DDNS script"
 sudo ufw allow 53/udp comment "DDNS script"
 #IF IT DOES NOT WORK, AT LEAST ON UBUNTU INSTALL, bind-utils to get the host command
 #sudo crontab -e
-#Create a cron */3 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1
+#Create a cron */2 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1
 
-#IN bash scrypt echo (sudo crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
+#IN bash scrypt echo (sudo crontab -l 2>/dev/null; echo "*/2 * * * * /usr/local/bin/ddns_update.sh > /dev/null 2>&1") | sudo crontab -
 pubsss=$(ip --brief address show $WANPUB | awk '{print $3}' | cut -d'/' -f1)
 ipss=$(host $HOSTNAMESSSS | head -n1 | cut -f4 -d ' ')
 if [ "$ipss" = "$pubsss" ] ; then
