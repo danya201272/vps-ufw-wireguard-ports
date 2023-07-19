@@ -43,18 +43,15 @@ then
 	read -rp "Нужен вход по SSH RSA ключам для пользователя ${snames}?(Y/N): " -e -i Y SSHRSAA
 	if [[ $SSHRSAA == "y" || $SSHRSAA == "Y" || $SSHRSAA == "yes" || $SSHRSAA == "Yes" || $SSHRSAA == "Д" || $SSHRSAA == "Да" || $SSHRSAA == "д" || $SSHRSAA == "да" ]]
 	then
-		sudo su $snames
-		ssh-keygen -t rsa -b 3072
-		ssh-copy-id ${snames}@${SERVER_PUB_IPSS}
+		sudo -u $snames ssh-keygen -t rsa -b 3072
+		sudo -u $snames ssh-copy-id ${snames}@${SERVER_PUB_IPSS}
 		echo "Private KEY SSH RSA copy in id_rsa"
-		sudo cat ~/.ssh/id_rsa
+		sudo cat "/home/${snames}/.ssh/id_rsa"
 		read -rp "Убрать вход по паролю SSH?(Y/N): " -e -i Y SSHRSAAPASS
 		if [[ $SSHRSAAPASS == "y" || $SSHRSAAPASS == "Y" || $SSHRSAAPASS == "yes" || $SSHRSAAPASS == "Yes" || $SSHRSAAPASS == "Д" || $SSHRSAAPASS == "Да" || $SSHRSAAPASS == "д" || $SSHRSAAPASS == "да" ]]
 		then
 			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
-			sudo -s
 		fi
-		sudo -s
 	fi
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
@@ -66,7 +63,7 @@ else
 		sudo ssh-copy-id root@${SERVER_PUB_IPSS}
 		chmod 700 ~root ~root/.ssh && chmod 600 ~root/.ssh/authorized_keys
 		echo "Private KEY SSH RSA copy in id_rsa"
-		sudo cat ~/.ssh/id_rsa
+		sudo cat ~root/.ssh/id_rsa
 		read -rp "Убрать вход по паролю SSH?(Y/N): " -e -i Y SSHRSAAPASS1
 		if [[ $SSHRSAAPASS1 == "y" || $SSHRSAAPASS1 == "Y" || $SSHRSAAPASS1 == "yes" || $SSHRSAAPASS1 == "Yes" || $SSHRSAAPASS1 == "Д" || $SSHRSAAPASS1 == "Да" || $SSHRSAAPASS1 == "д" || $SSHRSAAPASS1 == "да" ]]
 		then
