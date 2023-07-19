@@ -43,7 +43,7 @@ then
 	read -rp "Нужен вход по SSH RSA ключам для пользователя ${snames}?(Y/N): " -e -i Y SSHRSAA
 	if [[ $SSHRSAA == "y" || $SSHRSAA == "Y" || $SSHRSAA == "yes" || $SSHRSAA == "Yes" || $SSHRSAA == "Д" || $SSHRSAA == "Да" || $SSHRSAA == "д" || $SSHRSAA == "да" ]]
 	then
-		sudo -s $snames
+		sudo su $snames
 		ssh-keygen -t rsa -b 3072
 		ssh-copy-id ${snames}@${SERVER_PUB_IPSS}
 		echo "Private KEY SSH RSA copy in id_rsa"
