@@ -40,12 +40,14 @@ read -rp "Нужно ли отключение root для SSH и добавле
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
 then
 	read -p "Введите имя нового пользователя(bino):" snames
-	sudo adduser $snames
-	echo "Это имя:${snames} и пароль нового пользователя ssh"
+	read -s -p "Введите пароль для нового пользователя:" sspassword
+	EncryptedPasswordHere=$(perl -e 'print crypt($ARGV[0], "sspassword")' $sspassword)
+	sudo useradd -s /bin/bash -m -p "$EncryptedPasswordHere" "$snames"
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
 	sudo sed -i "/PermitRootLogin /c PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
-	echo "Ваш новый логин SSH: $snames и порт SSH $SSH_PORT, пароль который указали сверху"
+	echo ""
+	echo "Ваш новый логин SSH: $snames и порт SSH ${SSH_PORT}, пароль: ${sspassword}"
 	read -rp "Нужен вход по SSH RSA ключам для пользователя ${snames}?(Y/N): " -e -i Y SSHRSAA
 	if [[ $SSHRSAA == "y" || $SSHRSAA == "Y" || $SSHRSAA == "yes" || $SSHRSAA == "Yes" || $SSHRSAA == "Д" || $SSHRSAA == "Да" || $SSHRSAA == "д" || $SSHRSAA == "да" ]]
 	then
@@ -252,7 +254,7 @@ echo "IP адрес клиента Wireguard:${ip_vpn_client}"
 echo "Ваш IP публичный адрес DDNS NO-IP(сервера дома):${DDNSIPSSS}"
 echo "Ваш IP публичный адрес (сервера дома):${HOSTNAMESSSS}"
 echo "Имя нового пользователя SSH:${snames}"
-echo ""
+echo "Пароль нового пользователя SSH:${sspassword}"
 echo ""
 echo ""
 echo "Файл конфигурациий для клиента Wireguard сохранять в .conf"
