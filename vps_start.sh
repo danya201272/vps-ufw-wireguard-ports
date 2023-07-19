@@ -55,6 +55,11 @@ then
 	fi
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
+	read -rp "Нужно сменить пароль ROOT?(Y/N): " -e -i N ROOTPASSWORDI
+	if [[ $ROOTPASSWORDI == "y" || $ROOTPASSWORDI == "Y" || $ROOTPASSWORDI == "yes" || $ROOTPASSWORDI == "Yes" || $ROOTPASSWORDI == "Д" || $ROOTPASSWORDI == "Да" || $ROOTPASSWORDI == "д" || $ROOTPASSWORDI == "да" ]]
+	then
+		sudo passwd root
+	fi
 	read -rp "Нужен вход по SSH RSA ключам для ROOT?(Y/N): " -e -i Y SSHRSAA1
 	if [[ $SSHRSAA1 == "y" || $SSHRSAA1 == "Y" || $SSHRSAA1 == "yes" || $SSHRSAA1 == "Yes" || $SSHRSAA1 == "Д" || $SSHRSAA1 == "Да" || $SSHRSAA1 == "д" || $SSHRSAA1 == "да" ]]
 	then
