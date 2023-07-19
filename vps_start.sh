@@ -61,7 +61,7 @@ else
 		sudo -s
 		sudo ssh-keygen -t rsa -b 3072
 		sudo ssh-copy-id root@${SERVER_PUB_IPSS}
-		chmod 700 ~root ~root/.ssh && chmod 600 ~root/.ssh/authorized_keys
+		sudo chmod 700 ~root ~root/.ssh && sudo chmod 600 ~root/.ssh/authorized_keys
 		echo "Private KEY SSH RSA copy in id_rsa"
 		sudo cat ~root/.ssh/id_rsa
 		read -rp "Убрать вход по паролю SSH?(Y/N): " -e -i Y SSHRSAAPASS1
