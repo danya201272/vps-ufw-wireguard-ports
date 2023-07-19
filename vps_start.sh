@@ -43,7 +43,7 @@ then
 	read -rp "Нужен вход по SSH RSA ключам для пользователя ${snames}?(Y/N): " -e -i Y SSHRSAA
 	if [[ $SSHRSAA == "y" || $SSHRSAA == "Y" || $SSHRSAA == "yes" || $SSHRSAA == "Yes" || $SSHRSAA == "Д" || $SSHRSAA == "Да" || $SSHRSAA == "д" || $SSHRSAA == "да" ]]
 	then
-		sudo su $snames
+		sudo -s $snames
 		ssh-keygen -t rsa -b 3072
 		ssh-copy-id ${snames}@${SERVER_PUB_IPSS}
 		echo "Private KEY SSH RSA copy in id_rsa"
@@ -52,16 +52,16 @@ then
 		if [[ $SSHRSAAPASS == "y" || $SSHRSAAPASS == "Y" || $SSHRSAAPASS == "yes" || $SSHRSAAPASS == "Yes" || $SSHRSAAPASS == "Д" || $SSHRSAAPASS == "Да" || $SSHRSAAPASS == "д" || $SSHRSAAPASS == "да" ]]
 		then
 			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
-			sudo su
+			sudo -s
 		fi
-		sudo su
+		sudo -s
 	fi
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
 	read -rp "Нужен вход по SSH RSA ключам для ROOT?(Y/N): " -e -i Y SSHRSAA1
 	if [[ $SSHRSAA1 == "y" || $SSHRSAA1 == "Y" || $SSHRSAA1 == "yes" || $SSHRSAA1 == "Yes" || $SSHRSAA1 == "Д" || $SSHRSAA1 == "Да" || $SSHRSAA1 == "д" || $SSHRSAA1 == "да" ]]
 	then
-		sudo su
+		sudo -s
 		sudo ssh-keygen -t rsa -b 3072
 		sudo ssh-copy-id root@${SERVER_PUB_IPSS}
 		chmod 700 ~root ~root/.ssh && chmod 600 ~root/.ssh/authorized_keys
@@ -71,7 +71,7 @@ else
 		if [[ $SSHRSAAPASS1 == "y" || $SSHRSAAPASS1 == "Y" || $SSHRSAAPASS1 == "yes" || $SSHRSAAPASS1 == "Yes" || $SSHRSAAPASS1 == "Д" || $SSHRSAAPASS1 == "Да" || $SSHRSAAPASS1 == "д" || $SSHRSAAPASS1 == "да" ]]
 		then
 			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
-			sudo su
+			sudo -s
 		fi
 	fi
 fi
