@@ -41,8 +41,8 @@ if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" |
 then
 	read -p "Введите имя нового пользователя(bino):" snames
 	read -s -p "Введите пароль для нового пользователя:" sspassword
-	EncryptedPasswordHere=$(perl -e 'print crypt($ARGV[0], "sspassword")' $sspassword)
-	sudo useradd -s /bin/bash -m -p "$EncryptedPasswordHere" "$snames"
+	EncryptedPasswordHeres=$(perl -e 'print crypt($ARGV[0], "sspassword")' $sspassword)
+	sudo useradd -s /bin/bash -m -p "$EncryptedPasswordHeres" "$snames"
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
 	sudo sed -i "/PermitRootLogin /c PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
