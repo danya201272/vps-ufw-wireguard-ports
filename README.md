@@ -32,7 +32,7 @@ sudo cat /etc/ufw/before.rules
 # End required lines
 # allow all on loopback
 # ANTIDDOS Rules **************
--A ufw-before-input -p tcp -m multiport --dports ${SSH_PORT},${GAME_TCP} -j ufw-gametcp
+-A ufw-before-input -p tcp -m multiport --dports ${GAME_TCP} -j ufw-gametcp
 -A ufw-before-input -p udp -m multiport --dports ${GAME_UDP} -j ufw-gameudp
 # Limit connections per Class C
 -A ufw-gametcp -p tcp --syn -m connlimit --connlimit-above 100 --connlimit-mask 24 -j ufw-gametcp-logdrop
