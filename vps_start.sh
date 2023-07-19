@@ -25,7 +25,7 @@ then
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
 	sudo sed -i "/PermitRootLogin /c PermitRootLogin no" /etc/ssh/sshd_config
 	sudo usermod -aG sudo $snames
-	echo "Лучше переподключитесь в SSH с именем $snames и с портом $SSH_PORT и пароль,как указали к $snames и ответьте на верхний вопрос после перезахода(No)"
+	echo "Ваш новый логин SSH: $snames и порт SSH $SSH_PORT, пароль который указали сверху"
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
 fi
@@ -226,6 +226,9 @@ echo "IP адрес клиента Wireguard:${ip_vpn_client}"
 echo "Ваш IP публичный адрес DDNS NO-IP(сервера дома):${DDNSIPSSS}"
 echo "Ваш IP публичный адрес (сервера дома):${HOSTNAMESSSS}"
 echo "Имя нового пользователя SSH:${snames}"
+echo ""
+echo ""
+echo ""
 echo "Файл конфигурациий для клиента Wireguard сохранять в .conf"
 sudo cat `sudo find /root/ -type f -name "*.conf"`
 
