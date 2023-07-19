@@ -78,7 +78,7 @@ then
 	read -p "DDNS адрес пишите с NO-IP(пример hostesd.no-ip.com):" DDNSIPSSS
 	HOSTNAMESSSS=$(host $DDNSIPSSS | head -n1 | cut -f4 -d ' ')
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
-	crontab -l | grep -v 'root /usr/local/bin/ddns_update.sh'  | crontab -
+	sudo crontab -l | sudo grep -v 'root /usr/local/bin/ddns_update.sh'  | sudo crontab -
 	sudo rm -f /usr/local/bin/ddns_update.sh
 	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
