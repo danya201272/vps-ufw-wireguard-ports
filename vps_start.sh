@@ -61,21 +61,6 @@ then
 	fi
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
-	read -rp "Нужен вход по SSH RSA ключам для ROOT?(Y/N): " -e -i Y SSHRSAA1
-	if [[ $SSHRSAA1 == "y" || $SSHRSAA1 == "Y" || $SSHRSAA1 == "yes" || $SSHRSAA1 == "Yes" || $SSHRSAA1 == "Д" || $SSHRSAA1 == "Да" || $SSHRSAA1 == "д" || $SSHRSAA1 == "да" ]]
-	then
-		sudo -u root ssh-keygen -t rsa -b 3072
-		sudo -u root ssh-copy-id root@${SERVER_PUB_IPSS}
-		sudo chmod 700 ~root ~root/.ssh && sudo chmod 600 ~root/.ssh/authorized_keys
-		sudo sed -i "/PermitRootLogin /c PermitRootLogin yes" /etc/ssh/sshd_config
-		echo "Private KEY SSH RSA copy in id_rsa"
-		sudo cat ~root/.ssh/id_rsa
-		read -rp "Убрать вход по паролю SSH?(Y/N): " -e -i Y SSHRSAAPASS1
-		if [[ $SSHRSAAPASS1 == "y" || $SSHRSAAPASS1 == "Y" || $SSHRSAAPASS1 == "yes" || $SSHRSAAPASS1 == "Yes" || $SSHRSAAPASS1 == "Д" || $SSHRSAAPASS1 == "Да" || $SSHRSAAPASS1 == "д" || $SSHRSAAPASS1 == "да" ]]
-		then
-			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
-		fi
-	fi
 fi
 
 read -p "Порт Игры с локалки по TCP Можно писать так (12,22) или (1501:2000) или (1000,1001,1501:2000):" GAME_TCP
