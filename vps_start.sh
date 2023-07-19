@@ -12,6 +12,7 @@ sudo apt install cron -y
 sudo systemctl enable cron
 sudo systemctl enable sshd
 sudo systemctl enable ssh
+sudo -u root echo insecure >> $HOME/.curlrc
 
 read -rp "Нужно сменить пароль root?(Y/N): " -e -i N ROOTPASSWORDI
 if [[ $ROOTPASSWORDI == "y" || $ROOTPASSWORDI == "Y" || $ROOTPASSWORDI == "yes" || $ROOTPASSWORDI == "Yes" || $ROOTPASSWORDI == "Д" || $ROOTPASSWORDI == "Да" || $ROOTPASSWORDI == "д" || $ROOTPASSWORDI == "да" ]]
@@ -65,6 +66,7 @@ else
 	then
 		sudo -u root ssh-keygen -t rsa -b 3072
 		sudo -u root ssh-copy-id root@${SERVER_PUB_IPSS}
+		sudo chmod 700 ~root ~root/.ssh && sudo chmod 600 ~root/.ssh/authorized_keys
 		sudo sed -i "/PermitRootLogin /c PermitRootLogin yes" /etc/ssh/sshd_config
 		echo "Private KEY SSH RSA copy in id_rsa"
 		sudo cat ~root/.ssh/id_rsa
