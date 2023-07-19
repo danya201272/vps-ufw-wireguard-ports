@@ -12,7 +12,7 @@ sudo apt install cron -y
 sudo systemctl enable cron
 sudo systemctl enable sshd
 sudo systemctl enable ssh
-sudo -u root echo insecure >> $HOME/.curlrc
+
 
 read -rp "Нужно сменить пароль root?(Y/N): " -e -i N ROOTPASSWORDI
 if [[ $ROOTPASSWORDI == "y" || $ROOTPASSWORDI == "Y" || $ROOTPASSWORDI == "yes" || $ROOTPASSWORDI == "Yes" || $ROOTPASSWORDI == "Д" || $ROOTPASSWORDI == "Да" || $ROOTPASSWORDI == "д" || $ROOTPASSWORDI == "да" ]]
@@ -76,7 +76,7 @@ sudo iptables -F OUTPUT
 sudo iptables -F FORWARD
 sudo iptables -F
 
-sudo curl -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
+sudo curl --insecure -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
 sudo chmod +x wireguard-install.sh
 sudo ./wireguard-install.sh
 
@@ -106,7 +106,7 @@ then
 	echo "Создаю скрипт обновления DDNS: ddns_update.sh"
 	sudo crontab -l | sudo grep -v '/usr/local/bin/ddns_update.sh'  | sudo crontab -
 	sudo rm -f /usr/local/bin/ddns_update.sh
-	sudo curl -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
+	sudo curl --insecure -O https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/ddns_update.sh
 	sudo chmod +x ddns_update.sh
 	sudo sed -i "2c HOSTNAMESSSS=${DDNSIPSSS} # С NO-IP ip локального сервера" ddns_update.sh
 	sudo sed -i "3c WIREGUARD_PORT=${WIREGUARD_PORT} # WIREGUARD Порт" ddns_update.sh
