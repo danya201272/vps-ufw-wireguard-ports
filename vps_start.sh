@@ -58,9 +58,8 @@ else
 	read -rp "Нужен вход по SSH RSA ключам для ROOT?(Y/N): " -e -i Y SSHRSAA1
 	if [[ $SSHRSAA1 == "y" || $SSHRSAA1 == "Y" || $SSHRSAA1 == "yes" || $SSHRSAA1 == "Yes" || $SSHRSAA1 == "Д" || $SSHRSAA1 == "Да" || $SSHRSAA1 == "д" || $SSHRSAA1 == "да" ]]
 	then
-		sudo -s
-		sudo ssh-keygen -t rsa -b 3072
-		sudo ssh-copy-id root@${SERVER_PUB_IPSS}
+		sudo -u root ssh-keygen -t rsa -b 3072
+		sudo -u root ssh-copy-id root@${SERVER_PUB_IPSS}
 		sudo chmod 700 ~root ~root/.ssh && sudo chmod 600 ~root/.ssh/authorized_keys
 		echo "Private KEY SSH RSA copy in id_rsa"
 		sudo cat ~root/.ssh/id_rsa
@@ -68,7 +67,6 @@ else
 		if [[ $SSHRSAAPASS1 == "y" || $SSHRSAAPASS1 == "Y" || $SSHRSAAPASS1 == "yes" || $SSHRSAAPASS1 == "Yes" || $SSHRSAAPASS1 == "Д" || $SSHRSAAPASS1 == "Да" || $SSHRSAAPASS1 == "д" || $SSHRSAAPASS1 == "да" ]]
 		then
 			sudo sed -i "/PasswordAuthentication /c PasswordAuthentication no" /etc/ssh/sshd_config
-			sudo -s
 		fi
 	fi
 fi
