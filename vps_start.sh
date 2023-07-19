@@ -13,7 +13,12 @@ sudo systemctl enable cron
 sudo systemctl enable sshd
 sudo systemctl enable ssh
 
-
+read -rp "Нужно сменить пароль root?(Y/N): " -e -i N ROOTPASSWORDI
+if [[ $ROOTPASSWORDI == "y" || $ROOTPASSWORDI == "Y" || $ROOTPASSWORDI == "yes" || $ROOTPASSWORDI == "Yes" || $ROOTPASSWORDI == "Д" || $ROOTPASSWORDI == "Да" || $ROOTPASSWORDI == "д" || $ROOTPASSWORDI == "да" ]]
+then
+	sudo passwd root
+fi
+	
 read -rp "Введите порт для SSH(22): " -e -i 22 SSH_PORT
 
 sudo ip -br a
@@ -55,16 +60,12 @@ then
 	fi
 else
 	sudo sed -i "/Port /c Port ${SSH_PORT}" /etc/ssh/sshd_config
-	read -rp "Нужно сменить пароль ROOT?(Y/N): " -e -i N ROOTPASSWORDI
-	if [[ $ROOTPASSWORDI == "y" || $ROOTPASSWORDI == "Y" || $ROOTPASSWORDI == "yes" || $ROOTPASSWORDI == "Yes" || $ROOTPASSWORDI == "Д" || $ROOTPASSWORDI == "Да" || $ROOTPASSWORDI == "д" || $ROOTPASSWORDI == "да" ]]
-	then
-		sudo passwd root
-	fi
 	read -rp "Нужен вход по SSH RSA ключам для ROOT?(Y/N): " -e -i Y SSHRSAA1
 	if [[ $SSHRSAA1 == "y" || $SSHRSAA1 == "Y" || $SSHRSAA1 == "yes" || $SSHRSAA1 == "Yes" || $SSHRSAA1 == "Д" || $SSHRSAA1 == "Да" || $SSHRSAA1 == "д" || $SSHRSAA1 == "да" ]]
 	then
 		sudo -u root ssh-keygen -t rsa -b 3072
-		sudo -u root ssh-copy-id root@${SERVER_PUB_IPSS}
+		sudo cat ~root/.ssh/id_rsa.pub | root@${SERVER_PUB_IPSS} "sudo mkdir -p ~root/.ssh && sudo cat >> ~root/.ssh/authorized_keys"
+		sudo sed -i "/PermitRootLogin /c PermitRootLogin yes" /etc/ssh/sshd_config
 		sudo chmod 700 ~root ~root/.ssh && sudo chmod 600 ~root/.ssh/authorized_keys
 		echo "Private KEY SSH RSA copy in id_rsa"
 		sudo cat ~root/.ssh/id_rsa
