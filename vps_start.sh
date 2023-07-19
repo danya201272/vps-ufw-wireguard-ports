@@ -28,7 +28,7 @@ SERVER_PUB_IPSS=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|
 		# Detect public IPv6 address
 		SERVER_PUB_IPSS=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
 	fi
-	read -rp "IPv4 or IPv6 адрес выхода в интернет VPS: " -e -i "${SERVER_PUB_IPSS}" SERVER_PUB_IPSS
+	read -rp "IPv4 or IPv6 адрес выхода в интернет VPS для SSH remote_ip: " -e -i "${SERVER_PUB_IPSS}" SERVER_PUB_IPSS
 
 read -rp "Нужно ли отключение root для SSH и добавление нового пользователя для SSH(Y/N): " -e -i Y ROOOTS
 if [[ $ROOOTS == "y" || $ROOOTS == "Y" || $ROOOTS == "yes" || $ROOOTS == "Yes" || $ROOOTS == "Д" || $ROOOTS == "Да" || $ROOOTS == "д" || $ROOOTS == "да" ]]
