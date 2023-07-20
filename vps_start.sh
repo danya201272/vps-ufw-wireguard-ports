@@ -246,6 +246,12 @@ fi
 sudo ufw reload
 sudo ufw disable && sudo ufw enable
 
+read -rp "Обновить sysctl.conf для более эффективной работы ядра(на свой страх и риск)?(Y/N): " -e -i N SYSCTLS
+if [[ $SYSCTLS == "y" || $SYSCTLS == "Y" || $SYSCTLS == "yes" || $SYSCTLS == "Yes" || $SYSCTLS == "Д" || $SYSCTLS == "Да" || $SYSCTLS == "д" || $SYSCTLS == "да" ]]
+then
+sudo wget -q -c https://raw.githubusercontent.com/danya201272/vps-ufw-wireguard-ports/main/sysctl.conf -O /etc/sysctl.conf
+fi
+
 echo "Порт SSH:${SSH_PORT}"
 echo "Порт Wireguard:${WIREGUARD_PORT}"
 echo "Порт Игровой TCP:${GAME_TCP}"
