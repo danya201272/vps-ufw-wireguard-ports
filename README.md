@@ -33,7 +33,7 @@ sudo cat /etc/ufw/before.rules
 -A PREROUTING -i ${WANPORTIK} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}
 -A PREROUTING -i ${WANPORTIK} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}
 # Forward traffic through ${WANPORTIK} - Change to match you out-interface
--A POSTROUTING -o ${WANPORTIK} -j SNAT --to-source ${VPS_PUB_IP} # -j MASQUERADE  при динамическом ip от провайдера
+-A POSTROUTING -o ${WANPORTIK} -j SNAT --to-source ${SERVER_PUB_IPSS} # -j MASQUERADE  при динамическом ip от провайдера
 # dont delete the COMMIT line or these nat table rules wont
 COMMIT
 ```
