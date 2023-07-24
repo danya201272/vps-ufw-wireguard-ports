@@ -24,7 +24,19 @@ sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y && sudo apt-g
 ```bash
 sudo cat /etc/ufw/before.rules
 ```
-
+```bash
+1i # NAT table rules
+*nat
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+# Port Forwardings
+-A PREROUTING -i ${WANPORTIK} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}
+-A PREROUTING -i ${WANPORTIK} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}
+# Forward traffic through ${WANPORTIK} - Change to match you out-interface
+-A POSTROUTING -o ${WANPORTIK} -j SNAT --to-source ${VPS_PUB_IP} # -j MASQUERADE  при динамическом ip от провайдера
+# dont delete the COMMIT line or these nat table rules wont
+COMMIT
+```
 ```bash
 *filter
 :ufw-gameudp - [0:0]
