@@ -201,7 +201,7 @@ sudo sed -i '5i # Port Forwardings' /etc/ufw/before.rules
 sudo sed -i "6i -A PREROUTING -i ${WANPORTIK} -p tcp -m multiport --dports ${GAME_TCP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
 sudo sed -i "7i -A PREROUTING -i ${WANPORTIK} -p udp -m multiport --dports ${GAME_UDP} -j DNAT --to-destination ${ip_vpn_client}" /etc/ufw/before.rules
 sudo sed -i "8i # Forward traffic through ${WANPORTIK} - Change to match you out-interface" /etc/ufw/before.rules
-sudo sed -i "9i -A POSTROUTING -o ${WANPORTIK} -j SNAT --to-source ${SERVER_PUB_IPSS}" /etc/ufw/before.rules # -j MASQUERADE  при динамическом ip от провайдера
+sudo sed -i "9i -A POSTROUTING -o ${WANPORTIK} -j SNAT --to-source ${SERVER_PUB_IPSS}" /etc/ufw/before.rules # -j MASQUERADE  при динамическом ip от провайдера VPS
 sudo sed -i '10i # dont delete the COMMIT line or these nat table rules wont' /etc/ufw/before.rules
 sudo sed -i '11i COMMIT' /etc/ufw/before.rules
 sudo sysctl -p
