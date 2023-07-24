@@ -25,7 +25,7 @@ sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y && sudo apt-g
 sudo cat /etc/ufw/before.rules
 ```
 ```bash
-1i # NAT table rules
+# NAT table rules
 *nat
 :PREROUTING ACCEPT [0:0]
 :POSTROUTING ACCEPT [0:0]
